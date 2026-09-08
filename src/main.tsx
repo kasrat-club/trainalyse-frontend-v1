@@ -6,6 +6,7 @@ import "@/design-system.css"
 import { App } from "./App.tsx"
 import { ThemeProvider } from "@/components/theme-provider.tsx"
 import Workout from "./Workout.tsx"
+import WorkoutView from "./WorkoutView.tsx"
 import Login from "./Login.tsx"
 import Signup from "./Signup.tsx"
 import Moreinfo from "./Moreinfo.tsx"
@@ -26,6 +27,10 @@ createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <Routes>
           <Route path="/Workout" element={<Workout />} />
+          {/* read-only view of a saved workout — reached from the "View only"
+              door in the tap-a-workout action sheet. Sits outside Layout (no
+              footer), like the editor. */}
+          <Route path="/WorkoutView" element={<WorkoutView />} />
           {/* unknown paths bounce to home (rendered WITH footer via Layout);
               `replace` keeps the bad URL out of history. Without this, `*`
               rendered a bare footerless <App/> — the "no footer" bug. */}

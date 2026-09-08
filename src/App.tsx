@@ -241,10 +241,10 @@ export function App() {
     setCalMonth(dateSearched ?? new Date())
   }
 
-  //this function occurs when we click on the logged workouts and it takes us to workout page but with the prefilled workout data and that is
-  // done by passing it through state and in that we pass workout : workout or simply workout
+  //this function occurs when we tap a logged workout: it opens the workout read-only
+  // (the View-only screen), which carries an Edit button to jump to the editor.
   function handleWorkoutOpen(workout: Workout) {
-    navigate("/Workout", { state: { workout } })
+    navigate("/WorkoutView", { state: { workout } })
   }
 
   // this is simple
