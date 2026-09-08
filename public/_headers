@@ -1,0 +1,13 @@
+# Vite copies public/ into dist/, where Workers parses this file. It is not
+# itself served as an asset.
+#
+# index.html deliberately has no rule here: the Workers default for static
+# assets is already "public, max-age=0, must-revalidate", so HTML revalidates
+# on every request and a new deploy is picked up immediately.
+#
+# Hashed bundles are immutable — the filename changes when the content does —
+# so they can be cached forever. Only /assets/* is listed because overlapping
+# _headers rules JOIN their values with a comma rather than overriding, so a
+# broad /* Cache-Control rule would corrupt this one.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

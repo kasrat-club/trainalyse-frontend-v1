@@ -31,3 +31,6 @@ dist-ssr
 
 # typescript
 *.tsbuildinfo
+
+# wrangler local state
+.wrangler

@@ -9,7 +9,9 @@
     "lint": "eslint",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "typecheck": "tsc -b",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && wrangler deploy",
+    "preview:worker": "npm run build && wrangler dev"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",
@@ -46,7 +48,8 @@
     "tailwindcss": "^4",
     "typescript": "~6",
     "typescript-eslint": "^8",
-    "vite": "^8"
+    "vite": "^8",
+    "wrangler": "^4.129.1"
   },
   "packageManager": "npm@11.9.0",
   "engines": {

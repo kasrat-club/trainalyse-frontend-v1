@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "kasrat",
+  "compatibility_date": "2026-09-08",
+
+  // Pinned so a deploy can never land on the wrong account when the logged-in
+  // user has access to more than one.
+  "account_id": "b0e2d14aeb1218c19077b9a83aa77f40",
+
+  "assets": {
+    "directory": "./dist",
+
+    // react-router handles routing client-side, so any path that isn't a real
+    // file must serve index.html. Equivalent to the Netlify /* -> /index.html
+    // rewrite this replaced.
+    "not_found_handling": "single-page-application"
+  }
+}
