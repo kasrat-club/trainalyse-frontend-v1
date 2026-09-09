@@ -102,14 +102,23 @@ function Workout() {
         setExercises(exercises.filter((ex) => ex.id !== id))
     }
   return (
-    <div className="flex flex-col mx-auto max-w-[430px] px-[var(--space-23)] gap-[var(--space-md)] ">
-      <div className="flex justify-between items-center mt-4">
-        <Button className="pl-0 text-base text-destructive " variant="ghost" >
-          <Trash2Icon className="size-5" />
-          Discard
-        </Button>
-        <Button className="bg-brand h-10 px-4 text-base" onClick={handleSave}>Save</Button>
-      </div>
+    <div className="flex flex-col mx-auto max-w-[430px] pb-[calc(var(--space-3xl)+env(safe-area-inset-bottom))]">
+      {/* Sticky header, matching Home and View: 84px tall (pt-6 pb-4 around 44px
+          controls), surface background, bottom border and safe-area top. Its
+          controls are Discard (left) and Save (right). */}
+      <header className="sticky top-0 z-20 border-b border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)]">
+        <div className="flex items-center justify-between px-[var(--space-23)] pt-6 pb-4">
+          <Button className="h-11 pl-0 text-base text-destructive" variant="ghost">
+            <Trash2Icon className="size-5" />
+            Discard
+          </Button>
+          <Button className="h-11 bg-brand px-4 text-base" onClick={handleSave}>Save</Button>
+        </div>
+      </header>
+
+      {/* Page content below the sticky header, keeping the page's 23px side
+          padding and 12px vertical rhythm. */}
+      <div className="flex flex-col gap-[var(--space-md)] px-[var(--space-23)] pt-[var(--space-lg)]">
       {/* Date + Time sit side by side, but flex-wrap lets Time drop to its own
           full-width row below Date when the viewport gets too narrow (< ~320px)
           for both to fit — the min-widths (Date wide enough for the full date
@@ -197,7 +206,7 @@ function Workout() {
            onConfirm={handleConfirmExercise}
          />
        )}
-
+      </div>
     </div>
   )
 }

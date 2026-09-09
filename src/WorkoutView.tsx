@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 // same shape, height AND width — the min-w floors both to the wider label's width
 // (Back), so the shorter "Edit" centres its content to match instead of hugging
 // tighter. Each button only adds its own colour on top.
-const headerPill = "h-9 min-w-[92px] justify-center gap-1.5 rounded-full border px-4 text-sm font-medium"
+const headerPill = "h-11 min-w-[92px] justify-center gap-1.5 rounded-full border px-4 text-sm font-medium"
 
 // The read-only view of a saved workout, reached from the "View only" door in the
 // tap-a-workout action sheet. It shows exactly what was logged with NO interactive
@@ -43,26 +43,33 @@ function WorkoutView() {
   }
 
   return (
-    <div className="mx-auto flex max-w-[430px] flex-col gap-[var(--space-lg)] px-[var(--space-23)] pb-[var(--space-2xl)]">
-      {/* Back to the list on the left; Edit jumps to the editor for this same
-          workout (passed through route state, exactly as tapping it did before). */}
-      <div className="mt-4 flex items-center justify-between">
-        <Button
-          className={cn(headerPill, "border-muted-foreground bg-transparent text-muted-foreground hover:bg-white/5 hover:text-foreground")}
-          onClick={() => navigate(-1)}
-        >
-          <ChevronLeft className="size-4" />
-          Back
-        </Button>
-        <Button
-          className={cn(headerPill, "border-[rgb(205_242_58/40%)] bg-[rgb(205_242_58/8%)] text-[var(--color-neon)] hover:bg-[rgb(205_242_58/14%)]")}
-          onClick={() => navigate("/Workout", { state: { workout } })}
-        >
-          <Pencil className="size-4" />
-          Edit
-        </Button>
-      </div>
+    <div className="mx-auto flex max-w-[430px] flex-col">
+      {/* Sticky header, styled exactly like the Home header — same height (pt-6
+          pb-4), bottom border, surface background and safe-area top — but its
+          controls are Back (returns to the list) and Edit (opens the editor for
+          this same workout). sticky top-0 keeps it visible as the page scrolls. */}
+      <header className="sticky top-0 z-20 border-b border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)]">
+        <div className="flex items-center justify-between px-[var(--space-23)] pt-6 pb-4">
+          <Button
+            className={cn(headerPill, "border-muted-foreground bg-transparent text-muted-foreground hover:bg-white/5 hover:text-foreground")}
+            onClick={() => navigate(-1)}
+          >
+            <ChevronLeft className="size-4" />
+            Back
+          </Button>
+          <Button
+            className={cn(headerPill, "border-[rgb(205_242_58/40%)] bg-[rgb(205_242_58/8%)] text-[var(--color-neon)] hover:bg-[rgb(205_242_58/14%)]")}
+            onClick={() => navigate("/Workout", { state: { workout } })}
+          >
+            <Pencil className="size-4" />
+            Edit
+          </Button>
+        </div>
+      </header>
 
+      {/* Page content sits below the sticky header, keeping the page's 23px side
+          padding and 16px vertical rhythm. */}
+      <div className="flex flex-col gap-[var(--space-lg)] px-[var(--space-23)] pt-[var(--space-lg)] pb-[var(--space-2xl)]">
       {/* Title + when it was done */}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold text-primary">{workout.title}</h1>
@@ -123,6 +130,7 @@ function WorkoutView() {
       ) : (
         <p className="text-sm text-muted-foreground">This workout has no exercises.</p>
       )}
+      </div>
     </div>
   )
 }

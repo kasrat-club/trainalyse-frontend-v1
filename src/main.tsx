@@ -35,7 +35,6 @@ createRoot(document.getElementById("root")!).render(
               `replace` keeps the bad URL out of history. Without this, `*`
               rendered a bare footerless <App/> — the "no footer" bug. */}
           <Route path="*" element={<Navigate to="/" replace />} />
-          <Route path="/Settings" element={<Settings />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Signup" element={<Signup />} />
           <Route path="/Moreinfo" element={<Moreinfo />} />
@@ -45,6 +44,7 @@ createRoot(document.getElementById("root")!).render(
           <Route element={<Layout />}>
             <Route path="/" element={<App />} />
             <Route path="/Graphs" element={<Graphs />} />
+            <Route path="/Settings" element={<Settings />} />
             <Route path="/Improve" element={<Improve />} />
             <Route path="/More" element={<More />} />
           </Route>

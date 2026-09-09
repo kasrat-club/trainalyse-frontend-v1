@@ -657,16 +657,26 @@ function Graphs() {
     // no mx-auto/max-w here - Layout already gives us the centered 430px column,
     // and an auto side margin would override the parents stretch and shrink this
     // to fit-content
-    <div className="flex flex-col px-[var(--space-23)] py-[var(--space-lg)] gap-[var(--space-md)]">
-      {/* looks like the input it replaced, but its only a trigger - the real
-          searching happens in the modal, same as the workout page */}
-      <button
-        type="button"
-        onClick={() => setShowExerciseSearch(true)}
-        className="flex h-11 w-full items-center rounded-[var(--radius-input)] border border-[var(--border-inputEdge)] bg-[var(--bg-inputBox)] px-[var(--space-md)] text-[length:var(--size-placeholder)] text-[var(--text-placeholder)]"
-      >
-        Search your exercise
-      </button>
+    <div className="flex flex-col">
+      {/* Sticky header, matching Home / View / Workout: 84px tall (pt-6 pb-4
+          around the 44px search control), surface background, bottom border and
+          safe-area top. Its control is the exercise-search trigger. */}
+      <header className="sticky top-0 z-20 border-b border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)]">
+        <div className="px-[var(--space-23)] pt-6 pb-4">
+          {/* looks like the input it replaced, but its only a trigger - the real
+              searching happens in the modal, same as the workout page */}
+          <button
+            type="button"
+            onClick={() => setShowExerciseSearch(true)}
+            className="flex h-11 w-full items-center rounded-[var(--radius-input)] border border-[var(--border-inputEdge)] bg-[var(--bg-inputBox)] px-[var(--space-md)] text-[length:var(--size-placeholder)] text-[var(--text-placeholder)]"
+          >
+            Search your exercise
+          </button>
+        </div>
+      </header>
+
+      {/* Page content below the sticky header */}
+      <div className="flex flex-col px-[var(--space-23)] py-[var(--space-lg)] gap-[var(--space-md)]">
       {/* landing state - nothing picked yet, so the charts have nothing to draw */}
       {selectedExerciseId === null && (
         <div className="flex flex-col items-center text-center gap-[var(--space-md)] rounded-[var(--radius-card)] border border-dashed border-[var(--border-cardEdge)] px-[var(--space-2xl)] py-[var(--space-3xl)]">
@@ -882,6 +892,7 @@ function Graphs() {
           onConfirm={handleConfirmExercise}
         />
       )}
+      </div>
     </div>
   )
 }

@@ -11,7 +11,6 @@ import { Calendar, CalendarDayButton } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
 import { CalendarIcon } from "lucide-react"
 import { SearchIcon } from "lucide-react"
-import { Settings } from "lucide-react"
 import { Plus } from "lucide-react"
 import { X } from "lucide-react"
 import { useScrollLock } from "@/hooks/use-scroll-lock"
@@ -247,11 +246,6 @@ export function App() {
     navigate("/WorkoutView", { state: { workout } })
   }
 
-  // this is simple
-  function handleSettings() {
-    navigate("/Settings")
-  }
-
   //this here shows the workouts but there is a catch , so if the user is searching with date it will show only those
   // workouts that are on that date and if not then if the user is searching with title it will show only those workouts
   // and if none of that then it will show all the workouts that were logged.
@@ -297,7 +291,7 @@ export function App() {
     <>
       {searchMode === "date" && (
         <div
-          className="fixed inset-0 z-10 flex items-center justify-center bg-black/60 p-[var(--space-lg)] backdrop-blur-sm"
+          className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-[var(--space-lg)] backdrop-blur-sm"
           onClick={() => setSearchMode("none")}
         >
           {/* 16px padding on every side, dark surface. stopPropagation so taps
@@ -417,39 +411,22 @@ export function App() {
           </Card>
         </div>
       )}
-      <main className="relative flex min-h-0 flex-1 flex-col">
-        <header className="mb-[var(--space-md)] border-b border-[var(--border-cardEdge)] bg-[var(--bg-surface-secondary)] pt-[env(safe-area-inset-top)]">
-          <div className="flex flex-col gap-[var(--space-md)] px-[var(--space-23)] pt-6 pb-4">
-            {/* Wordmark + circular icon buttons (calendar opens date search, gear opens settings) */}
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-brand">Trainalyse</h1>
-              <div className="flex items-center gap-4">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  aria-label="Search by date"
-                  onClick={handleDateSearch}
-                  className="size-9 rounded-full text-primary"
-                >
-                  <CalendarIcon className="size-5" strokeWidth={2.25} />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  aria-label="Go to Settings"
-                  onClick={handleSettings}
-                  className="size-9 rounded-full text-primary"
-                >
-                  <Settings className="size-5" strokeWidth={2.25} />
-                </Button>
-              </div>
+      <main className="relative flex flex-1 flex-col">
+        <header className="sticky top-0 z-20 border-b border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)]">
+          {/* Single row (design 1a): Kasrat avatar, always-open search, calendar.
+              All three are 44px tall and centre-aligned so their heights match. */}
+          <div className="flex items-center gap-[var(--space-sm)] px-[var(--space-23)] pt-6 pb-4">
+            {/* Placeholder brand avatar — an outlined neon ring, not a filled
+                button, so it reads as an icon rather than a tappable control. */}
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-[var(--color-neon)]">
+              <span className="text-base font-bold tracking-tight text-[var(--color-neon)]">K</span>
             </div>
 
             {/* Persistent title search — the leading icon is decorative, the Input drives titleSearched */}
-            <div className="relative">
-              <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted-foreground" />
+            <div className="relative min-w-0 flex-1">
+              <SearchIcon className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                className="h-11 pr-10 pl-10"
+                className="h-11 rounded-full pr-10 pl-10"
                 type="text"
                 placeholder="Search by title"
                 value={titleSearched}
@@ -461,12 +438,23 @@ export function App() {
                   type="button"
                   aria-label="Clear search"
                   onClick={() => setTitleSearched("")}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-primary"
+                  className="absolute top-1/2 right-3.5 -translate-y-1/2 text-muted-foreground hover:text-primary"
                 >
                   <X className="size-5" />
                 </button>
               )}
             </div>
+
+            {/* Calendar opens date search */}
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Search by date"
+              onClick={handleDateSearch}
+              className="size-11 shrink-0 rounded-full text-primary"
+            >
+              <CalendarIcon className="size-5" strokeWidth={2.25} />
+            </Button>
           </div>
         </header>
 
@@ -475,7 +463,7 @@ export function App() {
         2. there are no workouts saved so show a text for the user to start logging the workouts
        3. the user is searching with date for the workouts so those workouts only which are on that date
       4.  the user is searching with title for the workouts so those workouts only which are with that title */}
-        <section className="flex-1 overflow-y-auto">
+        <section className="flex-1 pt-[var(--space-md)]">
           {workouts.length === 0 ? (
             // first-run empty state: an inviting icon + a prominent neon call to
             // action, since there's no floating + button until the first workout
@@ -563,10 +551,17 @@ export function App() {
           )}
         </section>
 
+      </main>
+
+      {/* Floating actions live in a fixed, column-width overlay pinned above the
+          sticky footer, so they keep floating as the document scrolls instead of
+          riding the bottom of the (now content-height) page. The overlay ignores
+          pointer events; only the buttons themselves take taps. */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 mx-auto flex w-full max-w-[430px] flex-col items-end gap-3 px-[var(--space-23)] pb-[calc(6.5rem+env(safe-area-inset-bottom))]">
         {/*this is for the button which clears the date so that all the workouts are shown normally */}
         {dateSearched && (
           <Button
-            className="absolute bottom-0 mb-4 self-center bg-brand"
+            className="pointer-events-auto self-center bg-brand"
             onClick={() => setDateSearched(undefined)}
           >
             Clear Date
@@ -579,13 +574,13 @@ export function App() {
           <Button
             aria-label="Add workout"
             size="icon"
-            className="absolute right-[var(--space-23)] bottom-6 size-[60px] rounded-full bg-brand text-[var(--bg-surface-primary)] shadow-lg hover:bg-brand/90"
+            className="pointer-events-auto size-[60px] rounded-full bg-brand text-[var(--bg-surface-primary)] shadow-lg hover:bg-brand/90"
             onClick={handleClick}
           >
             <Plus className="size-8" strokeWidth={2.5} />
           </Button>
         )}
-      </main>
+      </div>
     </>
   )
 }

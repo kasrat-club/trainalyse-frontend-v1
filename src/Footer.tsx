@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { useNavigate, useLocation } from "react-router-dom"
-import { Home, ChartLine, Target, Menu } from "lucide-react"
+import { Home, ChartLine, Settings } from "lucide-react"
 import { Label } from "@/components/ui/label"
 
 function Footer() {
@@ -15,20 +15,17 @@ function Footer() {
   const handleHome = () => {
     navigate("/")
   }
-  const handleImprove = () => {
-    navigate("/Improve")
-  }
-  const handleMore = () => {
-    navigate("/More")
-  }
   function handleGraphs() {
     navigate("/Graphs")
   }
+  const handleSettings = () => {
+    navigate("/Settings")
+  }
   return (
     <>
-      {/* shrink-0 is what nails it down - as a flex child it would otherwise be
-          squashed by a tall page instead of holding its height */}
-      <footer className="shrink-0 border-t border-[var(--border-cardEdge)] bg-[var(--bg-surface-secondary)] pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+      {/* sticky bottom-0 pins the footer to the viewport bottom while the document
+          scrolls; shrink-0 keeps it from being squashed as a flex child. */}
+      <footer className="sticky bottom-0 z-20 shrink-0 border-t border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         <nav className="flex min-h-20 items-center justify-between px-[var(--space-23)]">
           <Button
             variant="ghost"
@@ -60,33 +57,18 @@ function Footer() {
           </Button>
           <Button
             variant="ghost"
-            aria-label="Go to Improve"
+            aria-label="Go to Settings"
             onClick={() => {
-              handleImprove()
+              handleSettings()
             }}
             className={`flex h-auto flex-col items-center px-0 ${
-              location.pathname === "/Improve"
+              location.pathname === "/Settings"
                 ? "text-brand"
                 : "text-muted-foreground"
             }`}
           >
-            <Target className="size-5" strokeWidth={1.2} />
-            <Label>Improve</Label>
-          </Button>
-          <Button
-            variant="ghost"
-            aria-label="Go to More"
-            onClick={() => {
-              handleMore()
-            }}
-            className={`flex h-auto flex-col items-center px-0 ${
-              location.pathname === "/More"
-                ? "text-brand"
-                : "text-muted-foreground"
-            }`}
-          >
-            <Menu className="size-5" strokeWidth={1.2} />
-            <Label>More</Label>
+            <Settings className="size-5" strokeWidth={1.2} />
+            <Label>Settings</Label>
           </Button>
         </nav>
       </footer>

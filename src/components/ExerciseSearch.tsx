@@ -45,7 +45,7 @@ function ExerciseSearch({ onClose, onConfirm }: ExerciseSearchProps) {
   return (
     // full-screen modal: it covers the whole page but is still just an overlay
     // rendered over the workout page (which stays mounted behind it), not a route
-    <div className="fixed inset-0 z-20 flex flex-col bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+    <div className="fixed inset-0 z-40 flex flex-col bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       {/* header: search input + close */}
       <div className="flex items-center gap-[var(--space-md)] p-[var(--space-lg)]">
         <div className="relative min-w-0 flex-1">
