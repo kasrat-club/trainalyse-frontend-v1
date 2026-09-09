@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { exercises as catalog } from "./data/exercise"
 import { type Workout as WorkoutData } from "./data/workouts"
 import ReadonlyExercise from "@/components/ReadonlyExercise"
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { cn } from "@/lib/utils"
 
 // Shared sizing for the two header pills (Back / Edit) so they're guaranteed the
@@ -81,25 +82,40 @@ function WorkoutView() {
             return (
               <div
                 key={exercise.id}
-                className="flex flex-col gap-[var(--space-md)] rounded-[var(--radius-card)] border border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] p-[var(--space-lg)]"
+                className="rounded-[var(--radius-card)] border border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] p-[var(--space-lg)]"
               >
-                <h2 className="text-lg font-bold text-foreground">{matched?.name}</h2>
-                <ReadonlyExercise exercise={exercise} />
-                {/* Note reads as one more entry, so it borrows the same neon bar
-                    the Set headings use — a full-height bar, a bold "Note" label,
-                    then the note itself muted below. Absent/blank note = nothing
-                    renders (guarded), so the card just ends on the last set. */}
-                {note && (
-                  <div className="flex gap-3">
-                    <span className="w-1 shrink-0 rounded-full bg-[var(--color-neon)]" />
-                    <div className="flex min-w-0 flex-col gap-1.5">
-                      <h3 className="text-base font-semibold text-foreground">Note</h3>
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap text-muted-foreground">
-                        {note}
-                      </p>
-                    </div>
-                  </div>
-                )}
+                {/* Same accordion the editor card uses: exercises start expanded
+                    (defaultValue) and the circular chevron floats to the card's
+                    top-right via the trigger's ml-auto, so tapping it collapses
+                    this exercise down to just its title. */}
+                <Accordion type="single" collapsible defaultValue="exercise">
+                  <AccordionItem value="exercise">
+                    <AccordionTrigger className="py-0">
+                      <h2 className="text-lg font-bold text-foreground">{matched?.name}</h2>
+                    </AccordionTrigger>
+                    <AccordionContent className="h-auto pb-0">
+                      <div className="flex flex-col gap-[var(--space-md)] pt-[var(--space-md)]">
+                        <ReadonlyExercise exercise={exercise} />
+                        {/* Note reads as one more entry, so it borrows the same neon
+                            bar the Set headings use — a full-height bar, a bold "Note"
+                            label, then the note itself muted below. Absent/blank note
+                            = nothing renders (guarded), so the card just ends on the
+                            last set. */}
+                        {note && (
+                          <div className="flex gap-3">
+                            <span className="w-1 shrink-0 rounded-full bg-[var(--color-neon)]" />
+                            <div className="flex min-w-0 flex-col gap-1.5">
+                              <h3 className="text-base font-semibold text-foreground">Note</h3>
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap text-muted-foreground">
+                                {note}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </div>
             )
           })}

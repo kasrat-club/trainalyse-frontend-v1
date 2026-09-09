@@ -1,5 +1,4 @@
 import { Fragment, useState } from "react"
-import { ChevronDown } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { exercises, type ExerciseType } from "@/data/exercise"
@@ -70,9 +69,8 @@ function ReadonlyExercise({ exercise }: ReadonlyExerciseProps) {
     const difficulty: Difficulty = limb.difficulty ?? "normal"
 
     const difficultyPill = (
-      <div className="flex h-9 w-full items-center justify-between gap-1 rounded-md border border-input bg-transparent px-1.5 text-sm">
+      <div className="flex h-9 w-full items-center justify-center rounded-md border border-input bg-transparent px-1.5 text-sm">
         {difficultyShortLabels[difficulty]}
-        <ChevronDown className="size-4 shrink-0 opacity-50" />
       </div>
     )
 
