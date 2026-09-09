@@ -14,10 +14,13 @@ import Exercise from "./Exercise"
 import { useLocation } from "react-router-dom"
 import { Field, FieldError } from "@/components/ui/field"
 import { useTrimWhitespace, normalizeText } from "@/hooks/use-trim-whitespace"
+import { useScrolled } from "@/hooks/use-scrolled"
 
 
 function Workout() {
   const location = useLocation()// in the other file we navigate with usenavigate and then we receive data here with uselocation
+  // reveals the sticky header's bottom border only after the page scrolls
+  const scrolled = useScrolled()
   const passedWorkout = location.state?.workout as WorkoutData | undefined
   // we are creating a new variable called passedWorkout and we pluck the data from the state by using the key which was
   // workout and we give the shape to it as Workoutdata from the json file
@@ -106,7 +109,11 @@ function Workout() {
       {/* Sticky header, matching Home and View: 84px tall (pt-6 pb-4 around 44px
           controls), surface background, bottom border and safe-area top. Its
           controls are Discard (left) and Save (right). */}
-      <header className="sticky top-0 z-20 border-b border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)]">
+      <header
+        className={`sticky top-0 z-20 border-b bg-[var(--bg-page)] pt-[env(safe-area-inset-top)] transition-colors ${
+          scrolled ? "border-[var(--border-cardEdge)]" : "border-transparent"
+        }`}
+      >
         <div className="flex items-center justify-between px-[var(--space-23)] pt-6 pb-4">
           <Button className="h-9 pl-0 text-base text-destructive" variant="ghost">
             <Trash2Icon className="size-5" />

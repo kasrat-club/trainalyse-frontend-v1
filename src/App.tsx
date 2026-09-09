@@ -14,6 +14,7 @@ import { SearchIcon } from "lucide-react"
 import { Plus } from "lucide-react"
 import { X } from "lucide-react"
 import { useScrollLock } from "@/hooks/use-scroll-lock"
+import { useScrolled } from "@/hooks/use-scrolled"
 import { Dumbbell, Activity, List } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
@@ -217,6 +218,11 @@ export function App() {
   // can move the view back to the current month from anywhere.
   const [calMonth, setCalMonth] = React.useState<Date>(new Date())
 
+  // the header shares the page background and only reveals its bottom border once
+  // the page has scrolled a little — at the very top it reads as one flat surface
+  // with the content, and the border appears the moment anything scrolls under it.
+  const scrolled = useScrolled()
+
   // every date that has a logged workout, as Date objects, so the calendar can
   // flag those days. duplicates (two workouts on one date) are harmless here.
   const loggedDates = React.useMemo(
@@ -412,7 +418,11 @@ export function App() {
         </div>
       )}
       <main className="relative flex flex-1 flex-col">
-        <header className="sticky top-0 z-20 border-b border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)]">
+        <header
+          className={`sticky top-0 z-20 border-b bg-[var(--bg-page)] pt-[env(safe-area-inset-top)] transition-colors ${
+            scrolled ? "border-[var(--border-cardEdge)]" : "border-transparent"
+          }`}
+        >
           {/* Single row (design 1a): Kasrat avatar, always-open search, calendar.
               All three are 36px tall and centre-aligned so their heights match. */}
           <div className="flex items-center gap-[var(--space-sm)] px-[var(--space-23)] pt-6 pb-4">
@@ -426,7 +436,7 @@ export function App() {
             <div className="relative min-w-0 flex-1">
               <SearchIcon className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                className="h-9 rounded-full pr-10 pl-10"
+                className="h-9 rounded-full bg-transparent pr-10 pl-10"
                 type="text"
                 placeholder="Search by title"
                 value={titleSearched}
@@ -451,7 +461,7 @@ export function App() {
               size="icon"
               aria-label="Search by date"
               onClick={handleDateSearch}
-              className="size-9 shrink-0 rounded-full text-primary"
+              className="size-9 shrink-0 rounded-full bg-transparent text-primary"
             >
               <CalendarIcon className="size-5" strokeWidth={2.25} />
             </Button>

@@ -31,6 +31,7 @@ import {
   type YAxisTickContentProps,
 } from "recharts"
 import { ChartLine } from "lucide-react"
+import { useScrolled } from "@/hooks/use-scrolled"
 
 // a per-limb exercise leaves the total key undefined on every point (and vice
 // versa), so pull out just the points this key actually has before comparing
@@ -540,6 +541,8 @@ function PerLimbCard({
 }
 
 function Graphs() {
+  // reveals the sticky header's bottom border only after the page scrolls
+  const scrolled = useScrolled()
   // the search lives in the same modal the workout page uses, so this is just
   // whether its open - the typing and filtering are all its own state
   const [showExerciseSearch, setShowExerciseSearch] = React.useState(false)
@@ -661,14 +664,18 @@ function Graphs() {
       {/* Sticky header, matching Home / View / Workout: 84px tall (pt-6 pb-4
           around the 44px search control), surface background, bottom border and
           safe-area top. Its control is the exercise-search trigger. */}
-      <header className="sticky top-0 z-20 border-b border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)]">
+      <header
+        className={`sticky top-0 z-20 border-b bg-[var(--bg-page)] pt-[env(safe-area-inset-top)] transition-colors ${
+          scrolled ? "border-[var(--border-cardEdge)]" : "border-transparent"
+        }`}
+      >
         <div className="px-[var(--space-23)] pt-6 pb-4">
           {/* looks like the input it replaced, but its only a trigger - the real
               searching happens in the modal, same as the workout page */}
           <button
             type="button"
             onClick={() => setShowExerciseSearch(true)}
-            className="flex h-9 w-full items-center rounded-[var(--radius-input)] border border-[var(--border-inputEdge)] bg-[var(--bg-inputBox)] px-[var(--space-md)] text-[length:var(--size-placeholder)] text-[var(--text-placeholder)]"
+            className="flex h-9 w-full items-center rounded-[var(--radius-input)] border border-[var(--border-inputEdge)] bg-transparent px-[var(--space-md)] text-[length:var(--size-placeholder)] text-[var(--text-placeholder)]"
           >
             Search your exercise
           </button>

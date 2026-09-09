@@ -6,6 +6,7 @@ import { exercises as catalog } from "./data/exercise"
 import { type Workout as WorkoutData } from "./data/workouts"
 import ReadonlyExercise from "@/components/ReadonlyExercise"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
+import { useScrolled } from "@/hooks/use-scrolled"
 import { cn } from "@/lib/utils"
 
 // Shared sizing for the two header pills (Back / Edit) so they're guaranteed the
@@ -23,6 +24,8 @@ const headerPill = "h-9 min-w-[92px] justify-center gap-1.5 rounded-full border 
 function WorkoutView() {
   const location = useLocation()
   const navigate = useNavigate()
+  // reveals the sticky header's bottom border only after the page scrolls
+  const scrolled = useScrolled()
   const workout = location.state?.workout as WorkoutData | undefined
 
   // Opened without a workout in route state (e.g. a hard refresh on this URL):
@@ -48,7 +51,11 @@ function WorkoutView() {
           pb-4), bottom border, surface background and safe-area top — but its
           controls are Back (returns to the list) and Edit (opens the editor for
           this same workout). sticky top-0 keeps it visible as the page scrolls. */}
-      <header className="sticky top-0 z-20 border-b border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)]">
+      <header
+        className={`sticky top-0 z-20 border-b bg-[var(--bg-page)] pt-[env(safe-area-inset-top)] transition-colors ${
+          scrolled ? "border-[var(--border-cardEdge)]" : "border-transparent"
+        }`}
+      >
         <div className="flex items-center justify-between px-[var(--space-23)] pt-6 pb-4">
           <Button
             className={cn(headerPill, "border-muted-foreground bg-transparent text-muted-foreground hover:bg-white/5 hover:text-foreground")}
