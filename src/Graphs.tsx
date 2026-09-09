@@ -668,7 +668,7 @@ function Graphs() {
           <button
             type="button"
             onClick={() => setShowExerciseSearch(true)}
-            className="flex h-11 w-full items-center rounded-[var(--radius-input)] border border-[var(--border-inputEdge)] bg-[var(--bg-inputBox)] px-[var(--space-md)] text-[length:var(--size-placeholder)] text-[var(--text-placeholder)]"
+            className="flex h-9 w-full items-center rounded-[var(--radius-input)] border border-[var(--border-inputEdge)] bg-[var(--bg-inputBox)] px-[var(--space-md)] text-[length:var(--size-placeholder)] text-[var(--text-placeholder)]"
           >
             Search your exercise
           </button>

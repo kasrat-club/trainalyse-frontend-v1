@@ -108,11 +108,11 @@ function Workout() {
           controls are Discard (left) and Save (right). */}
       <header className="sticky top-0 z-20 border-b border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)]">
         <div className="flex items-center justify-between px-[var(--space-23)] pt-6 pb-4">
-          <Button className="h-11 pl-0 text-base text-destructive" variant="ghost">
+          <Button className="h-9 pl-0 text-base text-destructive" variant="ghost">
             <Trash2Icon className="size-5" />
             Discard
           </Button>
-          <Button className="h-11 bg-brand px-4 text-base" onClick={handleSave}>Save</Button>
+          <Button className="h-9 bg-brand px-4 text-base" onClick={handleSave}>Save</Button>
         </div>
       </header>
 

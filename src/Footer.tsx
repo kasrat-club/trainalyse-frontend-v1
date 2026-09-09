@@ -26,7 +26,7 @@ function Footer() {
       {/* sticky bottom-0 pins the footer to the viewport bottom while the document
           scrolls; shrink-0 keeps it from being squashed as a flex child. */}
       <footer className="sticky bottom-0 z-20 shrink-0 border-t border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <nav className="flex min-h-20 items-center justify-between px-[var(--space-23)]">
+        <nav className="flex min-h-16 items-center justify-between px-[var(--space-23)]">
           <Button
             variant="ghost"
             aria-label="Go to Home"

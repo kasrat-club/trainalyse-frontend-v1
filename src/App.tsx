@@ -414,11 +414,11 @@ export function App() {
       <main className="relative flex flex-1 flex-col">
         <header className="sticky top-0 z-20 border-b border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] pt-[env(safe-area-inset-top)]">
           {/* Single row (design 1a): Kasrat avatar, always-open search, calendar.
-              All three are 44px tall and centre-aligned so their heights match. */}
+              All three are 36px tall and centre-aligned so their heights match. */}
           <div className="flex items-center gap-[var(--space-sm)] px-[var(--space-23)] pt-6 pb-4">
             {/* Placeholder brand avatar — an outlined neon ring, not a filled
                 button, so it reads as an icon rather than a tappable control. */}
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-[var(--color-neon)]">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-[var(--color-neon)]">
               <span className="text-base font-bold tracking-tight text-[var(--color-neon)]">K</span>
             </div>
 
@@ -426,7 +426,7 @@ export function App() {
             <div className="relative min-w-0 flex-1">
               <SearchIcon className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                className="h-11 rounded-full pr-10 pl-10"
+                className="h-9 rounded-full pr-10 pl-10"
                 type="text"
                 placeholder="Search by title"
                 value={titleSearched}
@@ -451,7 +451,7 @@ export function App() {
               size="icon"
               aria-label="Search by date"
               onClick={handleDateSearch}
-              className="size-11 shrink-0 rounded-full text-primary"
+              className="size-9 shrink-0 rounded-full text-primary"
             >
               <CalendarIcon className="size-5" strokeWidth={2.25} />
             </Button>

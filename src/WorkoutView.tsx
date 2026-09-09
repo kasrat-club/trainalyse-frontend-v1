@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 // same shape, height AND width — the min-w floors both to the wider label's width
 // (Back), so the shorter "Edit" centres its content to match instead of hugging
 // tighter. Each button only adds its own colour on top.
-const headerPill = "h-11 min-w-[92px] justify-center gap-1.5 rounded-full border px-4 text-sm font-medium"
+const headerPill = "h-9 min-w-[92px] justify-center gap-1.5 rounded-full border px-4 text-sm font-medium"
 
 // The read-only view of a saved workout, reached from the "View only" door in the
 // tap-a-workout action sheet. It shows exactly what was logged with NO interactive
