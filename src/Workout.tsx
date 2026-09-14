@@ -11,11 +11,12 @@ import { Check, Trash2Icon, X } from "lucide-react"
 import { Label } from "./components/ui/label"
 import ExerciseSearch from "./components/ExerciseSearch"
 import Exercise from "./Exercise"
-import { useLocation, Navigate } from "react-router-dom"
+import { useLocation, Navigate, useNavigate } from "react-router-dom"
 import { Field, FieldError } from "@/components/ui/field"
 import { useTrimWhitespace, normalizeText } from "@/hooks/use-trim-whitespace"
 import { useActiveWorkout } from "@/hooks/useActiveWorkout"
 import { type WorkoutDraft } from "@/components/active-workout-provider"
+import { DiscardConfirmModal } from "./components/DiscardConfirmModal"
 import { useScrolled } from "@/hooks/use-scrolled"
 import { cn } from "@/lib/utils"
 
@@ -27,8 +28,11 @@ const headerPill = "h-9 min-w-[92px] justify-center gap-1.5 rounded-full border 
 
 function Workout() {
   const location = useLocation()// in the other file we navigate with usenavigate and then we receive data here with uselocation
+  const navigate = useNavigate()
   // reveals the sticky header's bottom border only after the page scrolls
   const scrolled = useScrolled()
+  // gates the Discard confirmation dialog
+  const [confirmingDiscard, setConfirmingDiscard] = React.useState(false)
   const passedWorkout = location.state?.workout as WorkoutData | undefined
 
   // TWO modes share this page:
@@ -97,7 +101,21 @@ function Workout() {
       return
     }
     setTitleError(undefined)
-    // persistence isn't wired yet — validation only for now
+    // real persistence (the backend API call, and adding a NEW workout to the
+    // timeline) is still deferred. for now Save just ends the session: clearing
+    // the pipe fires the provider's effect that wipes the localStorage key, so a
+    // saved workout no longer counts as "in progress". editing a saved workout
+    // has no pipe entry to clear, so we only touch it for a new workout.
+    if (!editingSaved) setActiveWorkout(null)
+    navigate("/")
+  }
+
+  // Discard ends the workout without saving. it's gated by a confirmation dialog
+  // (opened from the header button below). same clear-the-pipe path as Save, but
+  // no title check — you can throw away an untitled draft.
+  function handleDiscard() {
+    if (!editingSaved) setActiveWorkout(null)
+    navigate("/")
   }
 
   //this is for confirming a selectedexercise and it takes the catalog id of that exercise
@@ -151,7 +169,10 @@ function Workout() {
         }`}
       >
         <div className="flex items-center justify-between px-[var(--space-23)] pt-6 pb-4">
-          <Button className={cn(headerPill, "border-destructive bg-transparent text-destructive hover:bg-destructive/10")}>
+          <Button
+            className={cn(headerPill, "border-destructive bg-transparent text-destructive hover:bg-destructive/10")}
+            onClick={() => setConfirmingDiscard(true)}
+          >
             <Trash2Icon className="size-4" />
             Discard
           </Button>
@@ -260,6 +281,14 @@ function Workout() {
            onConfirm={handleConfirmExercise}
          />
        )}
+
+      {/* Discard confirmation — same dialog the in-progress banner uses */}
+      {confirmingDiscard && (
+        <DiscardConfirmModal
+          onCancel={() => setConfirmingDiscard(false)}
+          onConfirm={handleDiscard}
+        />
+      )}
       </div>
     </div>
   )

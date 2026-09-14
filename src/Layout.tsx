@@ -4,6 +4,7 @@
 // the default the export
 import { Outlet } from "react-router-dom"
 import Footer from "./Footer"
+import { WorkoutBanner } from "./components/WorkoutBanner"
 
 function Layout() {
   return (
@@ -21,6 +22,9 @@ function Layout() {
         <div className="flex flex-1 flex-col">
           <Outlet />
         </div>
+        {/* the in-progress pill: shows on every footer page while a workout is
+            active, pinned above the footer. renders nothing when none is running. */}
+        <WorkoutBanner />
         <Footer />
       </div>
     </>

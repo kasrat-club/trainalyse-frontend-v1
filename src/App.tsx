@@ -511,13 +511,17 @@ export function App() {
                 Log your first session and it&apos;ll show up here, newest
                 first.
               </p>
-              <Button
-                onClick={handleClick}
-                className="mt-8 h-14 gap-2 rounded-2xl bg-brand px-8 text-base font-bold text-[var(--bg-surface-primary)] hover:bg-brand/90"
-              >
-                <Plus className="size-5" strokeWidth={2.75} />
-                Log a workout
-              </Button>
+              {/* hidden while a workout is active — the in-progress banner is the
+                  only start/resume affordance then */}
+              {!activeWorkout && (
+                <Button
+                  onClick={handleClick}
+                  className="mt-8 h-14 gap-2 rounded-2xl bg-brand px-8 text-base font-bold text-[var(--bg-surface-primary)] hover:bg-brand/90"
+                >
+                  <Plus className="size-5" strokeWidth={2.75} />
+                  Log a workout
+                </Button>
+              )}
             </div>
           ) : filteredWorkouts.length > 0 ? (
             // 23px side gutters, 16px top, and 16px between month blocks (last
@@ -598,8 +602,10 @@ export function App() {
         )}
 
         {/* the floating + button — only once at least one workout exists; before
-            that, the centered "Log a workout" button in the empty state stands in */}
-        {workouts.length > 0 && (
+            that, the centered "Log a workout" button in the empty state stands in.
+            hidden while a workout is active — the in-progress banner takes its
+            place, and you resume through that instead of starting another. */}
+        {workouts.length > 0 && !activeWorkout && (
           <Button
             aria-label="Add workout"
             size="icon"
