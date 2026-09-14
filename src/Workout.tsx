@@ -7,14 +7,22 @@ import { type Workout as WorkoutData, type WorkoutExercise } from "./data/workou
 import { user } from "./data/user"
 import { format } from "date-fns"
 import Timesetter from "@/components/ui/timesetter"
-import { Trash2Icon, X } from "lucide-react"
+import { Check, Trash2Icon, X } from "lucide-react"
 import { Label } from "./components/ui/label"
 import ExerciseSearch from "./components/ExerciseSearch"
 import Exercise from "./Exercise"
-import { useLocation } from "react-router-dom"
+import { useLocation, Navigate } from "react-router-dom"
 import { Field, FieldError } from "@/components/ui/field"
 import { useTrimWhitespace, normalizeText } from "@/hooks/use-trim-whitespace"
+import { useActiveWorkout } from "@/hooks/useActiveWorkout"
+import { type WorkoutDraft } from "@/components/active-workout-provider"
 import { useScrolled } from "@/hooks/use-scrolled"
+import { cn } from "@/lib/utils"
+
+// Same header-pill shape used by the Back / Edit pills on the read-only view
+// (WorkoutView) so Discard / Save match their build exactly — matched height and
+// width, centred icon + label. Each button only adds its own colour on top.
+const headerPill = "h-9 min-w-[92px] justify-center gap-1.5 rounded-full border px-4 text-sm font-medium"
 
 
 function Workout() {
@@ -22,32 +30,55 @@ function Workout() {
   // reveals the sticky header's bottom border only after the page scrolls
   const scrolled = useScrolled()
   const passedWorkout = location.state?.workout as WorkoutData | undefined
-  // we are creating a new variable called passedWorkout and we pluck the data from the state by using the key which was
-  // workout and we give the shape to it as Workoutdata from the json file
-  // this is not same as workoutdata, this is just another name for the type Workout and it is Workoutdata
-  const [exercises, setExercises] = React.useState<WorkoutExercise[]>(
-      passedWorkout?.exercises ?? []
+
+  // TWO modes share this page:
+  // - editing a SAVED workout (opened via Edit on the read-only view): the draft
+  //   is transient — it lives in local state and never touches the pipe, so
+  //   leaving the page throws the edits away.
+  // - a NEW workout (started from the home + button): the draft IS the shared
+  //   pipe, so it survives navigation, refresh and closing the browser.
+  const editingSaved = !!passedWorkout
+  const { activeWorkout, setActiveWorkout } = useActiveWorkout()
+  const [localDraft, setLocalDraft] = React.useState<WorkoutDraft | null>(
+    passedWorkout ?? null
   )
-  //this is the making of a new array which will be the exercise array which will have exercises from the saved
-  // workouts if saved otherwise it would start out empty
-  const [title, setTitle] = React.useState(passedWorkout?.title || "") // this is for title
+  // the one draft this page reads/writes, plus its setter — picked by mode.
+  const draft = editingSaved ? localDraft : activeWorkout
+  const setDraft = editingSaved ? setLocalDraft : setActiveWorkout
+
+  // the draft's fields, read straight off whichever source is active. every edit
+  // below writes them back through setDraft immutably (spread the old draft,
+  // overwrite one field), which is what keeps the pipe (and later localStorage)
+  // in sync on every change. `prev` can be null, so each writer no-ops on null.
+  const exercises = draft?.exercises ?? []
+  const title = draft?.title ?? ""
+  const pickTime = draft?.time ?? format(new Date(), "HH:mm")
+
+  const setTitle = React.useCallback(
+    (value: string) => setDraft((prev) => (prev ? { ...prev, title: value } : prev)),
+    [setDraft]
+  )
+  const setExercises = (next: WorkoutExercise[]) =>
+    setDraft((prev) => (prev ? { ...prev, exercises: next } : prev))
+  const setPickTime = (value: string) =>
+    setDraft((prev) => (prev ? { ...prev, time: value } : prev))
+
   // shown only after a Save attempt with an empty title; clears as they type
   const [titleError, setTitleError] = React.useState<string | undefined>()
   // trim the ends live-ish and collapse internal runs ("a   b" -> "a b") on blur
   const titleTrim = useTrimWhitespace(title, setTitle, { collapseInternal: true })
-  const [pickTime, setPickTime] = React.useState(
-    passedWorkout?.time ?? format(new Date(), "HH:mm")
-  )
   //this is for the modal that will pop up when you click on add new exercise
   const [showExerciseSearch, setShowExerciseSearch] =
     React.useState<boolean>(false)
-  const[editingExerciseId, setEditingExerciseId] = React.useState<number | null>(null)
-  // the workout's bodyweight — one shared value for every bodyweight exercise,
-  // seeded from the user's saved weight. Editing it in any exercise's modal
-  // updates it here, so the last value entered wins and every bodyweight
-  // exercise recalculates from it. Persisted to the user's profile at Save
-  // (backend wiring is deferred with the rest of Save).
-  const [bodyWeight, setBodyWeight] = React.useState<number>(user.weight)
+  const [editingExerciseId, setEditingExerciseId] = React.useState<number | null>(null)
+  // the workout's bodyweight — one shared value for every bodyweight exercise.
+  // now lives ON the draft so a mid-workout change survives navigation/refresh.
+  // falls back to the user's saved weight until it's been set on this draft
+  // (fresh drafts, and saved workouts being edited, carry no bodyWeight). at Save
+  // it's split back out to the user's profile (deferred with the rest of Save).
+  const bodyWeight = draft?.bodyWeight ?? user.weight
+  const setBodyWeight = (value: number) =>
+    setDraft((prev) => (prev ? { ...prev, bodyWeight: value } : prev))
 
   // for the title change
   function handleTitleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -104,6 +135,11 @@ function Workout() {
     function handleDeleteExercise(id: number) {
         setExercises(exercises.filter((ex) => ex.id !== id))
     }
+  // no draft means this page was reached without a workout to edit (e.g. the URL
+  // typed directly, or after Discard cleared the pipe) — bounce home rather than
+  // render an editor whose edits would go nowhere.
+  if (!draft) return <Navigate to="/" replace />
+
   return (
     <div className="flex flex-col mx-auto max-w-[430px] pb-[calc(var(--space-3xl)+env(safe-area-inset-bottom))]">
       {/* Sticky header, matching Home and View: 84px tall (pt-6 pb-4 around 44px
@@ -115,11 +151,17 @@ function Workout() {
         }`}
       >
         <div className="flex items-center justify-between px-[var(--space-23)] pt-6 pb-4">
-          <Button className="h-9 pl-0 text-base text-destructive" variant="ghost">
-            <Trash2Icon className="size-5" />
+          <Button className={cn(headerPill, "border-destructive bg-transparent text-destructive hover:bg-destructive/10")}>
+            <Trash2Icon className="size-4" />
             Discard
           </Button>
-          <Button className="h-9 bg-brand px-4 text-base" onClick={handleSave}>Save</Button>
+          <Button
+            className={cn(headerPill, "border-[rgb(205_242_58/40%)] bg-[rgb(205_242_58/8%)] text-[var(--color-neon)] hover:bg-[rgb(205_242_58/14%)]")}
+            onClick={handleSave}
+          >
+            <Check className="size-4" />
+            Save
+          </Button>
         </div>
       </header>
 
@@ -135,7 +177,12 @@ function Workout() {
         <div className="flex flex-col gap-2 flex-1 min-w-[176px]">
         <Label className="text-muted-foreground">Date</Label>
       <DatePickerDemo
-        initialDate={passedWorkout?.date ?? format(new Date(), "yyyy-MM-dd")}
+        initialDate={draft?.date ?? format(new Date(), "yyyy-MM-dd")}
+        onDateChange={(d) =>
+          setDraft((prev) =>
+            prev && d ? { ...prev, date: format(d, "yyyy-MM-dd") } : prev
+          )
+        }
          /></div>
         <div className="flex flex-col gap-2 flex-1 min-w-[72px]" >
         <Label className="text-muted-foreground">Time</Label>

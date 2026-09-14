@@ -16,12 +16,14 @@ import Improve from "./Improve.tsx"
 import More from "./More.tsx"
 import Layout from "./Layout.tsx"
 import { Toaster } from "@/components/ui/sonner.tsx"
+import ActiveWorkoutContextProvider from "./components/active-workout-provider"
 
 createRoot(document.getElementById("root")!).render(
   //this only works in production side and not when the user is using the project and the job for strictmode is
   // to revoke the functions twice to see if there is any impurity in the function like is there any subscription
   // remaining to clean up and other things like that.
   <StrictMode>
+    <ActiveWorkoutContextProvider>
     <ThemeProvider>
       {/*and the BrowserRouter is a component from the library that is being improted called react router dom */}
       <BrowserRouter>
@@ -52,6 +54,7 @@ createRoot(document.getElementById("root")!).render(
       </BrowserRouter>
       {/* App-wide toast host: outside the router so it shows on every route (incl. Workout, which sits outside Layout). top-center avoids the mobile keyboard. */}
       <Toaster position="top-center" />
-    </ThemeProvider>
+      </ThemeProvider>
+    </ActiveWorkoutContextProvider>
   </StrictMode>
 )

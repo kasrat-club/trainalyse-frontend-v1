@@ -17,6 +17,7 @@ import { useScrollLock } from "@/hooks/use-scroll-lock"
 import { useScrolled } from "@/hooks/use-scrolled"
 import { Dumbbell, Activity, List } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
+import { useActiveWorkout } from "./hooks/useActiveWorkout"
 
 // compact k/M formatting for the big kg (volume) and kg·s (endurance) totals so
 // a 5–6 digit value never wraps or crowds its label: 20000 → 20K, 1250000 →
@@ -199,10 +200,27 @@ function DateCard({
 
 
 export function App() {
+  // the shared "is a workout running?" slot from the pipe
+  const { activeWorkout, setActiveWorkout } = useActiveWorkout()
   const navigate = useNavigate()
   const handleClick = () => {
-    const time = new Date().toLocaleString()
-    navigate("/Workout", { state: { time } })// here we are navigating to workout page when we click on + button and state is a way so that we can transfer a data while navigating
+    // a workout is already running → just reopen it, never overwrite it
+    if (activeWorkout) {
+      navigate("/Workout")
+      return
+    }
+    // none running → drop a fresh, empty draft into the pipe (this is what
+    // officially "starts" a workout), then open the editor. The draft carries
+    // the Workout shape: a fresh id, today's date, an empty title, the current
+    // time, and no exercises yet.
+    setActiveWorkout({
+      id: Date.now(),
+      date: format(new Date(), "yyyy-MM-dd"),
+      title: "",
+      time: format(new Date(), "HH:mm"),
+      exercises: [],
+    })
+    navigate("/Workout")
   }
   // this here is used so that we know what the user is searching at a time like with date or title or nothing.
   const [searchMode, setSearchMode] = React.useState<"none" | "date" | "title">(
@@ -295,6 +313,7 @@ export function App() {
 
   return (
     <>
+
       {searchMode === "date" && (
         <div
           className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-[var(--space-lg)] backdrop-blur-sm"
@@ -590,7 +609,8 @@ export function App() {
             <Plus className="size-8" strokeWidth={2.5} />
           </Button>
         )}
-      </div>
+        </div>
+
     </>
   )
 }
