@@ -33,6 +33,7 @@ import {
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "./components/ui/accordion"
 import { EllipsisVerticalIcon, Pencil, History, Trash2, PersonStanding, X } from "lucide-react"
 import { useScrollLock } from "@/hooks/use-scroll-lock"
+import { ConfirmModal } from "@/components/ConfirmModal"
 
 // Per-exercise-type column config: the grid-cols template AND the header labels
 // come from ONE place so the header count can never drift from the column count
@@ -100,7 +101,6 @@ function Exercise({ exerciseData, onChange, onDelete, onEdit, bodyWeight, onBody
   // exercise is more destructive than a dropset, so it goes through a confirm
   // step (mirrors the dropset delete modal in Set.tsx) instead of firing instantly.
   const [confirmDelete, setConfirmDelete] = useState(false)
-  useScrollLock(confirmDelete)
 
   // whether the read-only "previous performance" sheet is open, and whether
   // there's any past logged instance to show — the menu item is disabled and
@@ -369,38 +369,24 @@ function Exercise({ exerciseData, onChange, onDelete, onEdit, bodyWeight, onBody
       </Accordion>
     </Card>
 
-    {/* Confirm-delete modal for the whole exercise. Same look as the dropset
-        delete modal (Set.tsx): tap the backdrop or Cancel to dismiss, Confirm
-        removes it. Shows the exercise name so it's clear which one is going. */}
+    {/* Confirm-delete dialog for the whole exercise. Shared ConfirmModal, so it
+        matches every other confirm dialog. Names the exercise so it's clear which
+        one is going. */}
     {confirmDelete && (
-      <div
-        className="fixed inset-0 z-10 flex items-center justify-center bg-black/40"
-        onClick={() => setConfirmDelete(false)}
-      >
-        <div
-          className="flex w-[85%] max-w-[360px] flex-col gap-4 rounded-[var(--radius-card)] border border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] p-4"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <p className="text-base">
-            Are you sure you want to delete{" "}
-            <span className="font-semibold">{matchedExercise?.name}</span>?
-          </p>
-          <div className="flex justify-between">
-            <Button variant="outline" onClick={() => setConfirmDelete(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => {
-                onDelete()
-                setConfirmDelete(false)
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        </div>
-      </div>
+      <ConfirmModal
+        title={
+          <>
+            Delete <span className="text-foreground">{matchedExercise?.name}</span>?
+          </>
+        }
+        description="This exercise and all its sets will be removed from the workout."
+        confirmLabel="Delete"
+        onCancel={() => setConfirmDelete(false)}
+        onConfirm={() => {
+          onDelete()
+          setConfirmDelete(false)
+        }}
+      />
     )}
 
     {/* "Update your bodyweight" modal (bodyweight exercises only). The big number

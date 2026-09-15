@@ -7,6 +7,9 @@ import { type Workout as WorkoutData } from "./data/workouts"
 import ReadonlyExercise from "@/components/ReadonlyExercise"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { useScrolled } from "@/hooks/use-scrolled"
+import { useActiveWorkout } from "@/hooks/useActiveWorkout"
+import { WorkoutBanner } from "@/components/WorkoutBanner"
+import { warnToast } from "@/components/warn-toast"
 import { cn } from "@/lib/utils"
 
 // Shared sizing for the two header pills (Back / Edit) so they're guaranteed the
@@ -26,6 +29,9 @@ function WorkoutView() {
   const navigate = useNavigate()
   // reveals the sticky header's bottom border only after the page scrolls
   const scrolled = useScrolled()
+  // whether a workout is currently being logged — if so, Edit is blocked so the
+  // user can't juggle two workouts at once (they must save or discard first).
+  const { activeWorkout } = useActiveWorkout()
   const workout = location.state?.workout as WorkoutData | undefined
 
   // Opened without a workout in route state (e.g. a hard refresh on this URL):
@@ -65,8 +71,28 @@ function WorkoutView() {
             Back
           </Button>
           <Button
-            className={cn(headerPill, "border-[rgb(205_242_58/40%)] bg-[rgb(205_242_58/8%)] text-[var(--color-neon)] hover:bg-[rgb(205_242_58/14%)]")}
-            onClick={() => navigate("/Workout", { state: { workout } })}
+            aria-disabled={!!activeWorkout}
+            className={cn(
+              headerPill,
+              "border-[rgb(205_242_58/40%)] bg-[rgb(205_242_58/8%)] text-[var(--color-neon)] hover:bg-[rgb(205_242_58/14%)]",
+              // a workout is active: Edit is blocked, so make it LOOK disabled —
+              // dimmed + no hover lift. it stays clickable (no `disabled` attr) so
+              // tapping it can still fire the "finish your workout first" toast.
+              activeWorkout && "opacity-50 hover:bg-[rgb(205_242_58/8%)]"
+            )}
+            onClick={() => {
+              // a workout is mid-log: don't open a second editor. warn (deduped
+              // by a fixed id so repeated taps replace one toast) and stay put —
+              // the banner below gives the way out (reopen or discard).
+              if (activeWorkout) {
+                warnToast(
+                  "Finish your active workout first, save or discard it, then edit this workout.",
+                  "edit-blocked"
+                )
+                return
+              }
+              navigate("/Workout", { state: { workout } })
+            }}
           >
             <Pencil className="size-4" />
             Edit
@@ -75,8 +101,15 @@ function WorkoutView() {
       </header>
 
       {/* Page content sits below the sticky header, keeping the page's 23px side
-          padding and 16px vertical rhythm. */}
-      <div className="flex flex-col gap-[var(--space-lg)] px-[var(--space-23)] pt-[var(--space-lg)] pb-[var(--space-2xl)]">
+          padding and 16px vertical rhythm. When a workout is active the fixed
+          in-progress banner overlays the bottom, so pad extra so the last card
+          isn't hidden behind it. */}
+      <div
+        className={cn(
+          "flex flex-col gap-[var(--space-lg)] px-[var(--space-23)] pt-[var(--space-lg)]",
+          activeWorkout ? "pb-32" : "pb-[var(--space-2xl)]"
+        )}
+      >
       {/* Title + when it was done */}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold text-primary">{workout.title}</h1>
@@ -138,6 +171,13 @@ function WorkoutView() {
         <p className="text-sm text-muted-foreground">This workout has no exercises.</p>
       )}
       </div>
+
+      {/* The in-progress pill. This page sits outside Layout (no footer), so the
+          banner isn't rendered for us — we render it here in `standalone` mode so
+          it pins near the bottom instead of floating above a footer that isn't
+          there. It gives the user a way to reopen or discard the active workout
+          right from here, which is why Edit is blocked above. */}
+      <WorkoutBanner standalone />
     </div>
   )
 }

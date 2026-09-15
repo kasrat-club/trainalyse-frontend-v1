@@ -6,7 +6,7 @@ import { type WorkoutSet, type Dropset, type Limb } from "./data/workouts"
 import { user } from "./data/user"
 import React from "react"
 import { Separator } from "./components/ui/separator"
-import { useScrollLock } from "@/hooks/use-scroll-lock"
+import { ConfirmModal } from "@/components/ConfirmModal"
 
 
 interface SetsProps {
@@ -53,9 +53,6 @@ function Sets({ exerciseType, isBodyweight, bodyWeight, setData, activeLimb, onC
   // One piece of state does three jobs: which row to highlight, whether the
   // modal is open, and which id to delete on confirm.
   const [pendingDeleteId, setPendingDeleteId] = React.useState<number | null>(null)
-
-  // freeze the page behind while the confirm-delete modal is open so it can't scroll
-  useScrollLock(pendingDeleteId !== null)
 
 
   // clicking a row's delete icon opens the confirm modal for THAT dropset
@@ -158,34 +155,19 @@ function Sets({ exerciseType, isBodyweight, bodyWeight, setData, activeLimb, onC
         </Button>
       )}
 
-      {/* Confirm-delete modal (position:fixed, so it's out of the grid flow).
-          Open while a dropset is pending; the highlighted row shows which one. */}
+      {/* Confirm-delete dialog. Open while a dropset is pending; the highlighted
+          row shows which one. Shared ConfirmModal, so it matches every other
+          confirm dialog in the app. */}
       {pendingDeleteId !== null && (
-        <div
-          className="fixed inset-0 z-10 flex items-center justify-center bg-black/40"
-          onClick={() => setPendingDeleteId(null)}
-        >
-          <div
-            className="flex w-[85%] max-w-[360px] flex-col gap-4 rounded-[var(--radius-card)] border border-[var(--border-cardEdge)] bg-[var(--bg-surface-primary)] p-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <p className="text-base">Are you sure you want to delete this dropset?</p>
-            <div className="flex justify-between">
-              <Button variant="outline" onClick={() => setPendingDeleteId(null)}>
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  handleRemoveDropset(pendingDeleteId)
-                  setPendingDeleteId(null)
-                }}
-              >
-                Confirm
-              </Button>
-            </div>
-          </div>
-        </div>
+        <ConfirmModal
+          title="Delete this dropset?"
+          confirmLabel="Delete"
+          onCancel={() => setPendingDeleteId(null)}
+          onConfirm={() => {
+            handleRemoveDropset(pendingDeleteId)
+            setPendingDeleteId(null)
+          }}
+        />
       )}
     </>
   )

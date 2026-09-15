@@ -9,7 +9,12 @@ import { DiscardConfirmModal } from "./DiscardConfirmModal"
 // itself (that page sits outside Layout). only appears while a workout is active.
 // tapping the body reopens the workout; the trash icon discards it (via confirm).
 // it sits in the same band the home + button uses, but full width and centred.
-export function WorkoutBanner() {
+//
+// `standalone` is for pages that render the banner WITHOUT a footer beneath it
+// (the view-only page): the normal offset clears the sticky footer's height, but
+// with no footer that would leave a big empty gap, so we drop to a small offset
+// that pins the pill near the bottom instead.
+export function WorkoutBanner({ standalone = false }: { standalone?: boolean }) {
   const { activeWorkout, setActiveWorkout } = useActiveWorkout()
   const navigate = useNavigate()
   const [confirming, setConfirming] = React.useState(false)
@@ -21,7 +26,13 @@ export function WorkoutBanner() {
     <>
       {/* fixed, column-width overlay pinned just above the sticky footer. the
           overlay ignores pointer events; only the pill takes taps. */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-[430px] px-[var(--space-23)] pb-[calc(6.5rem+env(safe-area-inset-bottom))]">
+      <div
+        className={`pointer-events-none fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-[430px] px-[var(--space-23)] ${
+          standalone
+            ? "pb-[calc(1.5rem+env(safe-area-inset-bottom))]"
+            : "pb-[calc(6.5rem+env(safe-area-inset-bottom))]"
+        }`}
+      >
         <div
           role="button"
           tabIndex={0}
