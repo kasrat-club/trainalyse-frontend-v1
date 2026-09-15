@@ -1,76 +1,24 @@
-import React, { type ChangeEvent, type FormEvent } from "react"
-import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { PasswordInput } from "@/components/ui/password-input"
 import { Field, FieldLabel, FieldError } from "@/components/ui/field"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import StepIndicator from "@/components/ui/step-indicator"
-import { useTrimWhitespace } from "@/hooks/use-trim-whitespace"
-import {
-  emailError,
-  passwordError,
-  hasSpace,
-  PASSWORD_SPACE_MSG,
-} from "@/lib/validation"
-
-interface LoginErrors {
-  email?: string
-  password?: string
-}
-
-// figure out what, if anything, is wrong with each field. only the keys that
-// have a problem are set, so an empty object means the form is good to go.
-function validate(email: string, password: string): LoginErrors {
-  const errors: LoginErrors = {}
-
-  const emailMsg = emailError(email)
-  if (emailMsg) errors.email = emailMsg
-
-  const passwordMsg = passwordError(password, "Please enter your password.")
-  if (passwordMsg) errors.password = passwordMsg
-
-  return errors
-}
+import { useLoginForm } from "@/hooks/useLoginForm"
 
 function Login() {
-  const navigate = useNavigate()
-  const [email, setEmail] = React.useState("")
-  const [password, setPassword] = React.useState("")
-  // errors only appear after the first submit attempt, then clear per-field as
-  // the user fixes each one so the page never nags before they've tried.
-  const [errors, setErrors] = React.useState<LoginErrors>({})
-  // strip edge whitespace on the email: leading as they type, trailing on blur.
-  const emailTrim = useTrimWhitespace(email, setEmail)
-
-  function handleEmail(event: ChangeEvent<HTMLInputElement>) {
-    setEmail(event.target.value)
-    if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }))
-  }
-  function handlePassword(event: ChangeEvent<HTMLInputElement>) {
-    const value = event.target.value
-    setPassword(value)
-    // flag spaces the instant they appear; otherwise clear the field's error
-    if (hasSpace(value)) {
-      setErrors((prev) => ({ ...prev, password: PASSWORD_SPACE_MSG }))
-    } else if (errors.password) {
-      setErrors((prev) => ({ ...prev, password: undefined }))
-    }
-  }
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    // normalize the email's edge whitespace before checking (covers submitting
-    // mid-timer). the password is left as-is — any space in it is an error.
-    const cleanEmail = email.trim()
-    if (cleanEmail !== email) setEmail(cleanEmail)
-    const nextErrors = validate(cleanEmail, password)
-    setErrors(nextErrors)
-    if (Object.keys(nextErrors).length > 0) return
-    navigate("/")
-  }
-  function handleSignUp() {
-    navigate("/Signup")
-  }
+  // the brain of this form lives in one hook now. it hands back the exact same
+  // names the JSX below already used, so nothing in the markup had to change.
+  const {
+    email,
+    password,
+    errors,
+    emailTrim,
+    handleEmail,
+    handlePassword,
+    handleSubmit,
+    handleSignUp,
+  } = useLoginForm()
 
   return (
     <>
