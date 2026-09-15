@@ -6,6 +6,7 @@ import { WorkoutEditorHeader } from "./components/WorkoutEditorHeader"
 import { WorkoutDetailsFields } from "./components/WorkoutDetailsFields"
 import { WorkoutExerciseList } from "./components/WorkoutExerciseList"
 import { DiscardConfirmModal } from "./components/DiscardConfirmModal"
+import { LeaveConfirmModal } from "./components/LeaveConfirmModal"
 import { useScrolled } from "@/hooks/use-scrolled"
 
 function Workout() {
@@ -17,6 +18,8 @@ function Workout() {
   // same names the JSX below already used, so nothing in the markup had to change.
   const {
     draft,
+    editingSaved,
+    canSave,
     exercises,
     title,
     date,
@@ -36,10 +39,14 @@ function Workout() {
     handleConfirmExercise,
     handleExerciseChange,
     handleDeleteExercise,
-    handleSave,
+    attemptSave,
     handleDiscard,
+    handleBack,
+    handleLeave,
     confirmingDiscard,
     setConfirmingDiscard,
+    confirmingLeave,
+    setConfirmingLeave,
   } = useWorkoutEditor()
 
   // no draft means this page was reached without a workout to edit (e.g. the URL
@@ -51,8 +58,11 @@ function Workout() {
     <div className="flex flex-col mx-auto max-w-[430px] pb-[calc(var(--space-3xl)+env(safe-area-inset-bottom))]">
       <WorkoutEditorHeader
         scrolled={scrolled}
+        editingSaved={editingSaved}
+        canSave={canSave}
+        onBack={handleBack}
         onDiscard={() => setConfirmingDiscard(true)}
-        onSave={handleSave}
+        onSave={attemptSave}
       />
 
       {/* Page content below the sticky header, keeping the page's 23px side
@@ -96,6 +106,15 @@ function Workout() {
         <DiscardConfirmModal
           onCancel={() => setConfirmingDiscard(false)}
           onConfirm={handleDiscard}
+        />
+      )}
+
+      {/* Leave-without-saving confirmation — only reached from Back in edit mode
+          when there are unsaved changes */}
+      {confirmingLeave && (
+        <LeaveConfirmModal
+          onCancel={() => setConfirmingLeave(false)}
+          onConfirm={handleLeave}
         />
       )}
       </div>

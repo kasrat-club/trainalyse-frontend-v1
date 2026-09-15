@@ -1,11 +1,14 @@
 import { Button } from "@/components/ui/button"
-import { Check, Trash2Icon } from "lucide-react"
+import { Check, ChevronLeft, Trash2Icon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-// The sticky top bar of the Workout editor: Discard on the left, Save on the
-// right. A pure leaf — it holds no state and decides nothing. It just draws the
-// bar and calls back up (onDiscard / onSave) when a pill is tapped; the page
-// (via useWorkoutEditor) owns what those actually do.
+// The sticky top bar of the Workout editor. Its left pill depends on the mode:
+//   • new workout   → Discard (red) — throw the in-progress draft away.
+//   • editing saved → Back (muted) — leave the editor, guarded by the page if
+//     there are unsaved edits.
+// The right pill is always Save. A pure leaf — it holds no state and decides
+// nothing. It draws the bar and calls back up (onBack / onDiscard / onSave); the
+// page (via useWorkoutEditor) owns what those actually do.
 //
 // `scrolled` only changes how it LOOKS (the bottom border appears once the page
 // has scrolled), so it's a plain visual input, not workout data.
@@ -18,11 +21,23 @@ const headerPill =
 
 type WorkoutEditorHeaderProps = {
   scrolled: boolean
+  // true = editing a saved workout → show Back; false = new draft → show Discard.
+  editingSaved: boolean
+  // false dims the Save pill (it stays clickable so the tap can fire a toast).
+  canSave: boolean
+  onBack: () => void
   onDiscard: () => void
   onSave: () => void
 }
 
-export function WorkoutEditorHeader({ scrolled, onDiscard, onSave }: WorkoutEditorHeaderProps) {
+export function WorkoutEditorHeader({
+  scrolled,
+  editingSaved,
+  canSave,
+  onBack,
+  onDiscard,
+  onSave,
+}: WorkoutEditorHeaderProps) {
   return (
     // Sticky header, matching Home and View: 84px tall (pt-6 pb-4 around 44px
     // controls), surface background, bottom border and safe-area top.
@@ -32,15 +47,32 @@ export function WorkoutEditorHeader({ scrolled, onDiscard, onSave }: WorkoutEdit
       }`}
     >
       <div className="flex items-center justify-between px-[var(--space-23)] pt-6 pb-4">
+        {editingSaved ? (
+          <Button
+            className={cn(headerPill, "border-muted-foreground bg-transparent text-muted-foreground hover:bg-white/5 hover:text-foreground")}
+            onClick={onBack}
+          >
+            <ChevronLeft className="size-4" />
+            Back
+          </Button>
+        ) : (
+          <Button
+            className={cn(headerPill, "border-destructive bg-transparent text-destructive hover:bg-destructive/10")}
+            onClick={onDiscard}
+          >
+            <Trash2Icon className="size-4" />
+            Discard
+          </Button>
+        )}
         <Button
-          className={cn(headerPill, "border-destructive bg-transparent text-destructive hover:bg-destructive/10")}
-          onClick={onDiscard}
-        >
-          <Trash2Icon className="size-4" />
-          Discard
-        </Button>
-        <Button
-          className={cn(headerPill, "border-[rgb(205_242_58/40%)] bg-[rgb(205_242_58/8%)] text-[var(--color-neon)] hover:bg-[rgb(205_242_58/14%)]")}
+          aria-disabled={!canSave}
+          className={cn(
+            headerPill,
+            "border-[rgb(205_242_58/40%)] bg-[rgb(205_242_58/8%)] text-[var(--color-neon)] hover:bg-[rgb(205_242_58/14%)]",
+            // nothing to save: LOOK disabled (dimmed, no hover lift) but stay
+            // clickable (no `disabled` attr) so the tap still fires the toast.
+            !canSave && "opacity-50 hover:bg-[rgb(205_242_58/8%)]"
+          )}
           onClick={onSave}
         >
           <Check className="size-4" />

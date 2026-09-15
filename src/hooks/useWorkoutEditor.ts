@@ -1,11 +1,13 @@
 import React, { type ChangeEvent } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { format } from "date-fns"
+import { dequal } from "dequal"
 import { type Workout as WorkoutData, type WorkoutExercise } from "@/data/workouts"
 import { user } from "@/data/user"
 import { useTrimWhitespace, normalizeText } from "@/hooks/use-trim-whitespace"
 import { useActiveWorkout } from "@/hooks/useActiveWorkout"
 import { type WorkoutDraft } from "@/components/active-workout-provider"
+import { warnToast } from "@/components/warn-toast"
 
 // The whole "brain" of the Workout editor page: every piece of state, every
 // derived value, and every handler. It has NO JSX — it only computes what the
@@ -18,8 +20,10 @@ import { type WorkoutDraft } from "@/components/active-workout-provider"
 export function useWorkoutEditor() {
   const location = useLocation() // in the other file we navigate with usenavigate and then we receive data here with uselocation
   const navigate = useNavigate()
-  // gates the Discard confirmation dialog
+  // gates the Discard confirmation dialog (new-workout mode)
   const [confirmingDiscard, setConfirmingDiscard] = React.useState(false)
+  // gates the "leave without saving?" dialog (edit-a-saved-workout mode)
+  const [confirmingLeave, setConfirmingLeave] = React.useState(false)
   const passedWorkout = location.state?.workout as WorkoutData | undefined
 
   // TWO modes share this page:
@@ -36,6 +40,17 @@ export function useWorkoutEditor() {
   // the one draft this page reads/writes, plus its setter — picked by mode.
   const draft = editingSaved ? localDraft : activeWorkout
   const setDraft = editingSaved ? setLocalDraft : setActiveWorkout
+
+  // has the user actually changed anything while editing a saved workout? we deep-
+  // compare the live draft against the untouched original we were handed. deep
+  // equality (not "did they touch a field") is the point: reps 12 → 14 → 12 ends
+  // deeply equal to the original, so it correctly reads as NO change. only
+  // meaningful in edit mode — a new workout has no original to diff against.
+  const isDirty = editingSaved && !dequal(localDraft, passedWorkout)
+  // Save is only gated in edit mode: nothing changed = nothing to save. a new
+  // workout can always be saved. (once real persistence lands, saving an edit
+  // should reset the baseline so isDirty goes false again — deferred for now.)
+  const canSave = editingSaved ? isDirty : true
 
   // the draft's fields, read straight off whichever source is active. every edit
   // below writes them back through setDraft immutably (spread the old draft,
@@ -89,6 +104,17 @@ export function useWorkoutEditor() {
     setTitleError(undefined)
   }
 
+  // the header's Save pill is dimmed (not truly disabled) when there's nothing to
+  // save, so a tap still reaches here. if the workout is unchanged, nudge and stop
+  // — otherwise fall through to the real save.
+  function attemptSave() {
+    if (!canSave) {
+      warnToast("Make a change first, nothing to save yet.", "no-changes")
+      return
+    }
+    handleSave()
+  }
+
   // a title is required to save. normalize whitespace first (trim ends + collapse
   // internal runs), write it back so the field shows the cleaned value, then block
   // the save with a message if it's empty.
@@ -115,6 +141,23 @@ export function useWorkoutEditor() {
   function handleDiscard() {
     if (!editingSaved) setActiveWorkout(null)
     navigate("/")
+  }
+
+  // Back leaves the editor for the read-only view we came from. if there are
+  // unsaved edits, ask first (the confirm modal below); if nothing changed, just
+  // go — no need to warn about losing changes that don't exist.
+  function handleBack() {
+    if (isDirty) {
+      setConfirmingLeave(true)
+      return
+    }
+    navigate(-1)
+  }
+
+  // confirmed "leave without saving": drop the transient draft (edit mode never
+  // touched the pipe, so there's nothing to clear) and return to the view.
+  function handleLeave() {
+    navigate(-1)
   }
 
   //this is for confirming a selectedexercise and it takes the catalog id of that exercise
@@ -171,6 +214,8 @@ export function useWorkoutEditor() {
   return {
     draft,
     setDraft,
+    editingSaved,
+    canSave,
     exercises,
     title,
     setTitle,
@@ -192,9 +237,14 @@ export function useWorkoutEditor() {
     handleConfirmExercise,
     handleExerciseChange,
     handleDeleteExercise,
+    attemptSave,
     handleSave,
     handleDiscard,
+    handleBack,
+    handleLeave,
     confirmingDiscard,
     setConfirmingDiscard,
+    confirmingLeave,
+    setConfirmingLeave,
   }
 }
