@@ -114,7 +114,7 @@ function WorkoutView() {
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold text-primary">{workout.title}</h1>
         <p className="text-sm text-muted-foreground">
-          {format(parseISO(workout.date), "EEEE, d MMMM yyyy")}
+          {format(parseISO(workout.date), "EEEE, d MMM yyyy")}
           {prettyTime && ` · ${prettyTime}`}
         </p>
       </div>

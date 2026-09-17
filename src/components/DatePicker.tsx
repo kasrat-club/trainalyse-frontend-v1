@@ -25,7 +25,7 @@ export function DatePickerDemo({
   return (
     <>
       <Button variant="outline" onClick={() => setOpen(true)}>
-        {date ? format(date, "EEE, d MMMM yyyy") : <span>Pick a date</span>}
+        {date ? format(date, "EEE, d MMM yyyy") : <span>Pick a date</span>}
       </Button>
 
       {open && (

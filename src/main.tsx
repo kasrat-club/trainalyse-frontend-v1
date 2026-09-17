@@ -15,6 +15,7 @@ import Settings from "./Settings.tsx"
 import Improve from "./Improve.tsx"
 import More from "./More.tsx"
 import Layout from "./Layout.tsx"
+import Gallery from "./Gallery.tsx"
 import { Toaster } from "@/components/ui/sonner.tsx"
 import ActiveWorkoutContextProvider from "./components/active-workout-provider"
 
@@ -33,6 +34,13 @@ createRoot(document.getElementById("root")!).render(
               door in the tap-a-workout action sheet. Sits outside Layout (no
               footer), like the editor. */}
           <Route path="/WorkoutView" element={<WorkoutView />} />
+          {/* dev-only component gallery. import.meta.env.DEV is false in a
+              production build, so this Route is never mounted and /Gallery
+              falls through to the "*" catch-all below (bounces home). React
+              Router ignores non-element children, so the inline && is safe. */}
+          {import.meta.env.DEV && (
+            <Route path="/Gallery" element={<Gallery />} />
+          )}
           {/* unknown paths bounce to home (rendered WITH footer via Layout);
               `replace` keeps the bad URL out of history. Without this, `*`
               rendered a bare footerless <App/> — the "no footer" bug. */}
