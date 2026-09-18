@@ -131,9 +131,11 @@ function TimelineRail({
   return (
     // --node-y is the y of the (top) title's centerline measured from the card
     // top: the card's top padding (--space-lg) plus half the title's line box
-    // (text-lg 18px x leading-tight 1.25 = 22.5px). the circle sits there, the
-    // day number is centered on it, and the two line halves meet there. the
-    // track alone stretches to full card height (self-stretch) to carry the line.
+    // (text-lg 18px x leading-tight 1.25 = 22.5px). the circle sits there and the
+    // day number is centered on it; each line half stops 16px short of node-y
+    // (8px clear of the 8px-radius circle) with a rounded cap, so there's a small
+    // gap on either side of the dot. the track alone stretches to full card
+    // height (self-stretch) to carry the line.
     <div className="flex items-start gap-2 [--node-y:calc(var(--space-lg)+11.25px)]">
       <div className="flex w-9 flex-col items-start pt-[var(--space-lg)]">
         <span className="flex h-[22.5px] items-center text-xl leading-none font-bold text-primary">
@@ -145,10 +147,10 @@ function TimelineRail({
       </div>
       <div className="relative w-3 self-stretch">
         {!isFirst && (
-          <span className="absolute top-[-6px] bottom-[calc(100%-var(--node-y))] left-1/2 w-[3px] -translate-x-1/2 bg-[rgb(var(--white-channels)/20%)]" />
+          <span className="absolute top-[-6px] bottom-[calc(100%-var(--node-y)+16px)] left-1/2 w-[3px] -translate-x-1/2 rounded-b-full bg-[rgb(var(--white-channels)/20%)]" />
         )}
         {!isLast && (
-          <span className="absolute top-[var(--node-y)] bottom-[-6px] left-1/2 w-[3px] -translate-x-1/2 bg-[rgb(var(--white-channels)/20%)]" />
+          <span className="absolute top-[calc(var(--node-y)+16px)] bottom-[-6px] left-1/2 w-[3px] -translate-x-1/2 rounded-t-full bg-[rgb(var(--white-channels)/20%)]" />
         )}
         <span className="absolute top-[var(--node-y)] left-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-white-2)]" />
       </div>
@@ -250,7 +252,7 @@ export function App() {
           <div className="flex items-center gap-[var(--space-sm)] px-[var(--space-23)] pt-6 pb-4">
             {/* Placeholder brand avatar — an outlined neon ring, not a filled
                 button, so it reads as an icon rather than a tappable control. */}
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-[var(--color-neon)]">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full border border-[var(--color-neon)]">
               <span className="text-base font-bold tracking-tight text-[var(--color-neon)]">K</span>
             </div>
 
@@ -339,7 +341,7 @@ export function App() {
                       month — it follows the filter, so a search narrows it to
                       the matching workouts, not the month's true total. */}
                   <div className="flex items-center justify-between gap-3">
-                    <h2 className="text-2xl font-bold text-primary">
+                    <h2 className="text-xl font-bold text-primary">
                       {month.label}
                     </h2>
                     {(() => {

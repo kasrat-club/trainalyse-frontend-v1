@@ -34,13 +34,13 @@ export function ProfileCard({ name, email, initials, photoUrl, onEdit }: Profile
           can't push the Edit button off the card. */}
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-base font-semibold text-primary">{name}</span>
-        <span className="truncate text-sm text-muted-foreground">{email}</span>
+        <span className="truncate text-sm font-semibold text-muted-foreground">{email}</span>
       </div>
 
       <Button
         variant="outline"
         onClick={onEdit}
-        className="h-9 shrink-0 rounded-full px-4 text-sm font-medium"
+        className="h-9 shrink-0 rounded-full px-4 text-sm font-semibold"
       >
         Edit
       </Button>

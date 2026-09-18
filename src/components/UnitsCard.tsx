@@ -26,8 +26,8 @@ function UnitRow({
     "flex flex-1 flex-col items-start gap-px py-[11px] pr-[var(--space-sm)] pl-[var(--space-md)] text-left"
   const content = (
     <>
-      <span className="text-[14.5px] text-primary">{label}</span>
-      <span className="text-xs tabular-nums text-muted-foreground">{value}</span>
+      <span className="text-[length:var(--size-primaryText)] font-semibold text-primary">{label}</span>
+      <span className="text-[length:var(--size-label)] font-semibold tabular-nums text-muted-foreground">{value}</span>
     </>
   )
   return (
