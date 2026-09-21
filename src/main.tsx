@@ -18,6 +18,7 @@ import Layout from "./Layout.tsx"
 import Gallery from "./Gallery.tsx"
 import { Toaster } from "@/components/ui/sonner.tsx"
 import ActiveWorkoutContextProvider from "./components/active-workout-provider"
+import { InterfaceKit } from "interface-kit/react"
 
 createRoot(document.getElementById("root")!).render(
   //this only works in production side and not when the user is using the project and the job for strictmode is
@@ -63,6 +64,10 @@ createRoot(document.getElementById("root")!).render(
       {/* App-wide toast host: outside the router so it shows on every route (incl. Workout, which sits outside Layout). top-center avoids the mobile keyboard. */}
       <Toaster position="top-center" />
       </ThemeProvider>
+
+      <InterfaceKit />
     </ActiveWorkoutContextProvider>
+
   </StrictMode>
+
 )
