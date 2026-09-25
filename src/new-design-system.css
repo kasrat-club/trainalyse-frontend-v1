@@ -1,0 +1,253 @@
+/* =========================================================================
+   NEW DESIGN SYSTEM  —  Kasrat
+   =========================================================================
+   This is the single source of truth for the new design system. We build it
+   up bit by bit: colors first, then type, spacing, radius, etc.
+
+   COLORS ARE BUILT IN TWO LAYERS
+   ------------------------------
+   Layer 1  "The palette" (primitives) : every raw hex from the Paper frames,
+            named by family + a number. RULE: 100 = lightest, and the number
+            goes UP as the color gets DARKER. Nothing in the app should point
+            at a hex directly -- it points at these names instead.
+
+   Layer 2  "The roles" (semantic)     : names by JOB (background, text,
+            brand, warning...) that POINT AT a Layer-1 color. The app reads
+            these. (Layer 2 is added in the next step.)
+
+   We are building DARK MODE FIRST: near-black background, snow-white text,
+   yellow as the sparing accent (the 60 / 30 / 10 rule).
+
+   ISOLATION: every token below is scoped to `.ds-scope` (not `:root`) ON
+   PURPOSE. Only elements inside a `.ds-scope` wrapper (right now: the dev
+   Gallery) see these tokens, so the live app is completely unaffected while
+   we build. To roll the system out app-wide later, change `.ds-scope` to
+   `:root` here and wire the shadcn bridge.
+   ========================================================================= */
+
+
+/* -------------------------------------------------------------------------
+   LAYER 1 — THE PALETTE (primitives)
+   Each family has an "anchor": the one true color of that family, marked
+   below. Anchors are the 4th step in the 7-step ramps; the neutrals differ.
+   ------------------------------------------------------------------------- */
+
+.ds-scope {
+  /* YELLOW — the brand / accent color (used ~10% of the time) --------------- */
+  --yellow-100: #f9facf;
+  --yellow-200: #f3f49b;
+  --yellow-300: #edef66;
+  --yellow-400: #e6ea0b; /* ANCHOR — the brand color */
+  --yellow-500: #acae13;
+  --yellow-600: #74750f;
+  --yellow-700: #3a3b0b;
+
+  /* ORANGE — warnings ------------------------------------------------------- */
+  --orange-100: #ffe0ca;
+  --orange-200: #ffbf94;
+  --orange-300: #ffa15c;
+  --orange-400: #ff7f11; /* ANCHOR — warning */
+  --orange-500: #bf6010;
+  --orange-600: #80400d;
+  --orange-700: #402009;
+
+  /* RED — errors ------------------------------------------------------------ */
+  --red-100: #ffccca;
+  --red-200: #ff9894;
+  --red-300: #ff615c;
+  --red-400: #ff1b1c; /* ANCHOR — error */
+  --red-500: #c01616;
+  --red-600: #811211;
+  --red-700: #410a09;
+
+  /* GREEN — success (and maybe tips/info later) ----------------------------- */
+  --green-100: #ccdbca;
+  --green-200: #96b690;
+  --green-300: #619258;
+  --green-400: #256d1b; /* ANCHOR — success */
+  --green-500: #1d5215;
+  --green-600: #14370e;
+  --green-700: #0b1b08;
+
+  /* BLUE — info / tips (a teal-leaning blue, distinct from brand & success) -- */
+  --blue-100: #d9efed;
+  --blue-200: #b1dfdf;
+  --blue-300: #88d0cf;
+  --blue-400: #5bc0be; /* ANCHOR — info */
+  --blue-500: #45908f;
+  --blue-600: #2e6060;
+  --blue-700: #18312f;
+
+  /* SNOW — warm near-white neutrals, used for TEXT (~30% of the time) -------- */
+  --snow-100: #fbf5f3; /* ANCHOR — primary text */
+  --snow-200: #bcb8b6;
+  --snow-300: #7f7b7a;
+  --snow-400: #3f3e3d;
+
+  /* BLACK — neutral darks, used for the BACKGROUND (~60% of the time) -------- */
+  --black-100: #c0c0bf;
+  --black-200: #80807f;
+  --black-300: #424240;
+  --black-400: #020300; /* ANCHOR — page background */
+}
+
+
+/* -------------------------------------------------------------------------
+   LAYER 2 — THE ROLES (semantic)
+   Names by JOB. Each one POINTS AT a Layer-1 color. The app reads these,
+   never the raw palette. To re-theme, you change a pointer here (one line)
+   and it flows everywhere that uses that job.
+
+   These are the DARK-MODE values.
+   ------------------------------------------------------------------------- */
+
+.ds-scope {
+  /* SURFACES ---------------------------------------------------------------- */
+  --background: var(--black-400); /* the page behind everything (60%) */
+  /* --surface: TODO — the color of a card/box sitting ON the background.
+     We're deciding this later; may need a new step between --black-400 and
+     --black-300 so cards don't look like they float. */
+
+  /* TEXT (30%) -------------------------------------------------------------- */
+  --text-primary: var(--snow-100); /* main reading text */
+  --text-secondary: var(--snow-200); /* slightly dimmer text */
+  --text-muted: var(--snow-300); /* hints, placeholders, timestamps */
+
+  /* BRAND / ACCENT (10%) ---------------------------------------------------- */
+  --brand: var(--yellow-400); /* main buttons, links — used sparingly */
+  --on-brand: var(--black-400); /* text/icon placed ON a brand-filled button
+                                   (dark text on yellow, so it stays readable) */
+
+  /* BORDERS ----------------------------------------------------------------- */
+  --border: var(--black-300); /* lines around inputs, cards, dividers */
+
+  /* SEMANTIC STATES --------------------------------------------------------- */
+  /* NOTE: these point at the ANCHOR (the family's identity color). When we
+     build components we'll likely add readable companions per job, e.g. a
+     lighter "-text" version for text on the dark background and a darker
+     "-bg" version for a subtle banner tint. For now, the identity only. */
+  --warning: var(--orange-400);
+  --error: var(--red-400);
+  --success: var(--green-400);
+  --info: var(--blue-400); /* tips / informational messages */
+}
+
+
+/* =========================================================================
+   TYPOGRAPHY
+   =========================================================================
+   Font family (one for now — Geist), a tight size scale, and a matching
+   line-height for every size. A size and its line-height are a PAIR: use
+   --text-body-md together with --leading-body-md and never mix them up.
+
+   Line-height rule: body text is roomy (~1.5x) for readability; headings
+   are tighter, and get tighter as they grow. All values are adjustable.
+   ========================================================================= */
+
+.ds-scope {
+  /* FONT FAMILY ------------------------------------------------------------- */
+  --font-sans: "Geist Variable", sans-serif;
+
+  /* FONT WEIGHTS ------------------------------------------------------------ */
+  --font-weight-regular: 400; /* body text */
+  --font-weight-semibold: 600; /* subheadings, emphasis */
+  --font-weight-bold: 700; /* headings */
+
+  /* FONT SIZES -------------------------------------------------------------- */
+  /* Body — the everyday text. body-md (16px) is the normal/default size. */
+  --text-body-sm: 12px;
+  --text-body-md: 16px; /* DEFAULT normal text */
+  --text-body-lg: 20px;
+
+  /* Headings — h6 (smallest) up to h1 (largest). */
+  --text-h6: 20px;
+  --text-h5: 24px;
+  --text-h4: 32px;
+  --text-h3: 40px;
+  --text-h2: 48px;
+  --text-h1: 60px;
+
+  /* LINE HEIGHTS (one per size above, same names) --------------------------- */
+  --leading-body-sm: 20px;
+  --leading-body-md: 24px;
+  --leading-body-lg: 32px;
+
+  --leading-h6: 24px;
+  --leading-h5: 28px;
+  --leading-h4: 40px;
+  --leading-h3: 48px;
+  --leading-h2: 56px;
+  --leading-h1: 72px;
+
+  /* PARAGRAPH SPACING ------------------------------------------------------- */
+  /* The VERTICAL gap between stacked paragraphs of body text (NOT the gap
+     between letters — that's letter-spacing/tracking, added later if needed). */
+  --paragraph-body-sm: 16px;
+  --paragraph-body-md: 16px;
+  --paragraph-body-lg: 20px;
+
+  --paragraph-h6: 28px;
+  --paragraph-h5: 28px;
+  --paragraph-h4: 32px;
+  --paragraph-h3: 36px;
+  --paragraph-h2: 40px;
+  --paragraph-h1: 48px;
+}
+
+
+/* =========================================================================
+   RADIUS  (corner roundness)
+   =========================================================================
+   Same approach shadcn uses: ONE base value, and the whole scale is derived
+   from it with math. Change --radius and every step scales proportionally,
+   so small controls keep small corners and large surfaces keep larger ones.
+
+   base = 0.625rem = 10px.  Steps: sm 6 / md 8 / lg 10 / xl 14 / 2xl 18 /
+   3xl 22 / 4xl 26 (px).  Typical use: inputs/buttons -> sm/md, cards -> lg/xl.
+   ========================================================================= */
+
+.ds-scope {
+  --radius: 0.625rem; /* the base — everything below scales from this */
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-full: 9999px; /* pills & circles (avatars, toggles) */
+}
+
+
+/* =========================================================================
+   BORDER WIDTH
+   =========================================================================
+   No scale needed here — 1px covers almost everything (borders, dividers,
+   input outlines). A 2px option exists for focus rings / emphasis.
+   ========================================================================= */
+
+.ds-scope {
+  --border-width: 1px; /* default: borders, dividers, input outlines */
+  --border-width-thick: 2px; /* focus rings, emphasis */
+}
+
+
+/* =========================================================================
+   SPACING  (padding, margins, gaps between elements)
+   =========================================================================
+   One shared scale, used for ALL padding / margin / gap so rhythm stays
+   consistent across the app. Steps roughly double as they grow.
+   ========================================================================= */
+
+.ds-scope {
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 24px;
+  --space-3xl: 32px;
+  --space-4xl: 48px;
+}
+
