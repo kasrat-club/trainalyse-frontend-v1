@@ -24,19 +24,23 @@ const dsButtonVariants = cva("", {
   variants: {
     // The three looks. Behaviour is identical across them — only colour differs.
     variant: {
+      // The minimal token set has no hover/active COLOUR shades, so hover and
+      // press are expressed as behaviour (opacity / brightness) instead of a
+      // second colour token — see new-design-system.css.
       primary:
-        "border-transparent bg-[var(--brand)] text-[color:var(--on-brand)] hover:bg-[var(--yellow-500)] active:bg-[var(--yellow-600)]",
+        "border-transparent bg-[var(--brand)] text-[color:var(--on-brand)] hover:opacity-90 active:opacity-80",
       secondary:
-        "border-[var(--border)] bg-[var(--black-300)] text-[color:var(--text-primary)] hover:bg-[var(--black-200)] active:bg-[var(--black-200)]",
+        "border-[var(--border)] bg-[var(--surface)] text-[color:var(--text-primary)] hover:brightness-125 active:brightness-110",
       default:
-        "border-[var(--border)] bg-transparent text-[color:var(--text-primary)] hover:bg-[var(--black-300)] active:bg-[var(--black-300)]",
+        "border-[var(--border)] bg-transparent text-[color:var(--text-primary)] hover:bg-[var(--surface)] active:bg-[var(--surface)]",
     },
     // Padding + height + text size. (Corner radius & the press bounce stay as
-    // shadcn set them.)
+    // shadcn set them.) The scale only goes sm/md/lg, and the largest space
+    // token is --space-lg, so lg reuses it for padding and grows via height.
     size: {
-      sm: "h-9 px-[var(--space-md)] text-[length:var(--text-body-sm)]",
-      md: "h-10 px-[var(--space-lg)] text-[length:var(--text-body-md)]",
-      lg: "h-12 px-[var(--space-xl)] text-[length:var(--text-body-md)]",
+      sm: "h-9 px-[var(--space-md)] text-[length:var(--text-sm)]",
+      md: "h-10 px-[var(--space-lg)] text-[length:var(--text-md)]",
+      lg: "h-12 px-[var(--space-lg)] text-[length:var(--text-md)]",
     },
   },
   defaultVariants: {

@@ -1,147 +1,110 @@
 /* =========================================================================
    NEW DESIGN SYSTEM  —  Kasrat
    =========================================================================
-   This is the single source of truth for the new design system. We build it
-   up bit by bit: colors first, then type, spacing, radius, etc.
+   Single source of truth for the new design system, built from the "rules"
+   frame in Paper (deisgn pallette › rules page).
 
    COLORS ARE BUILT IN TWO LAYERS
    ------------------------------
-   Layer 1  "The palette" (primitives) : every raw hex from the Paper frames,
-            named by family + a number. RULE: 100 = lightest, and the number
-            goes UP as the color gets DARKER. Nothing in the app should point
-            at a hex directly -- it points at these names instead.
+   Layer 1  "The palette" (primitives) : the raw hex values, named by family
+            + a number. RULE: 100 = lightest, and the number goes UP as the
+            color gets DARKER. Nothing points at a hex directly -- it points
+            at these names instead.
 
-   Layer 2  "The roles" (semantic)     : names by JOB (background, text,
-            brand, warning...) that POINT AT a Layer-1 color. The app reads
-            these. (Layer 2 is added in the next step.)
+   Layer 2  "The roles" (semantic)     : names by JOB (background, surface,
+            text, brand...) that POINT AT a Layer-1 color. The app reads these.
 
-   We are building DARK MODE FIRST: near-black background, snow-white text,
-   yellow as the sparing accent (the 60 / 30 / 10 rule).
+   DARK MODE FIRST: near-black background, snow-white text, the theme color as
+   the sparing accent (the 60 / 30 / 10 rule).
 
    ISOLATION: every token below is scoped to `.ds-scope` (not `:root`) ON
    PURPOSE. Only elements inside a `.ds-scope` wrapper (right now: the dev
    Gallery) see these tokens, so the live app is completely unaffected while
    we build. To roll the system out app-wide later, change `.ds-scope` to
    `:root` here and wire the shadcn bridge.
+
+
+   COLOR RULES (from the rules frame)
+   ----------------------------------
+   1. Two colors to begin with: a BASE color and a THEME color.
+   2. The base color defines the surface and background. The background, the
+      card surface, borders and the neutral text are all just SHADES of the
+      one base color (lighter / brighter / less-saturated versions of it).
+   3. The theme color is untouched in every case: whatever the base color is,
+      it never changes the theme color.
+
+      Base color  = slate (#67787C)
+      Theme color = teal  (#015F79)
    ========================================================================= */
 
 
 /* -------------------------------------------------------------------------
    LAYER 1 — THE PALETTE (primitives)
-   Each family has an "anchor": the one true color of that family, marked
-   below. Anchors are the 4th step in the 7-step ramps; the neutrals differ.
+   RULE: 100 = lightest, the number goes UP as the color gets DARKER.
+   The BASE ramp is the one base color and its shades — every background,
+   surface, border and neutral-text value comes from here (rule 2). The
+   THEME stands on its own and is never derived from the base (rule 3).
    ------------------------------------------------------------------------- */
 
 .ds-scope {
-  /* YELLOW — the brand / accent color (used ~10% of the time) --------------- */
-  --yellow-100: #f9facf;
-  --yellow-200: #f3f49b;
-  --yellow-300: #edef66;
-  --yellow-400: #e6ea0b; /* ANCHOR — the brand color */
-  --yellow-500: #acae13;
-  --yellow-600: #74750f;
-  --yellow-700: #3a3b0b;
+  /* BASE — the one neutral (slate-leaning). Background + surface + text are
+     all shades of this. --------------------------------------------------- */
+  --base-100: #fafbfb; /* lightest — primary text */
+  --base-200: #9ca8aa; /* muted / secondary text */
+  --base-300: #67787c; /* ANCHOR — the base color itself */
+  --base-350: #666666; /* neutral (untinted) — the "even more muted" text step,
+                          dimmer than base-200; sits between the anchor and the
+                          surface by lightness */
+  --base-375: #333839; /* slate — the border/edge color (cards, inputs, header,
+                          footer, dividers); a step above the surface so edges
+                          read on a dark card */
+  --base-400: #161b1d; /* card / surface */
+  --base-500: #090b0c; /* darkest — page background */
 
-  /* ORANGE — warnings ------------------------------------------------------- */
-  --orange-100: #ffe0ca;
-  --orange-200: #ffbf94;
-  --orange-300: #ffa15c;
-  --orange-400: #ff7f11; /* ANCHOR — warning */
-  --orange-500: #bf6010;
-  --orange-600: #80400d;
-  --orange-700: #402009;
-
-  /* RED — errors ------------------------------------------------------------ */
-  --red-100: #ffccca;
-  --red-200: #ff9894;
-  --red-300: #ff615c;
-  --red-400: #ff1b1c; /* ANCHOR — error */
-  --red-500: #c01616;
-  --red-600: #811211;
-  --red-700: #410a09;
-
-  /* GREEN — success (and maybe tips/info later) ----------------------------- */
-  --green-100: #ccdbca;
-  --green-200: #96b690;
-  --green-300: #619258;
-  --green-400: #256d1b; /* ANCHOR — success */
-  --green-500: #1d5215;
-  --green-600: #14370e;
-  --green-700: #0b1b08;
-
-  /* BLUE — info / tips (a teal-leaning blue, distinct from brand & success) -- */
-  --blue-100: #d9efed;
-  --blue-200: #b1dfdf;
-  --blue-300: #88d0cf;
-  --blue-400: #5bc0be; /* ANCHOR — info */
-  --blue-500: #45908f;
-  --blue-600: #2e6060;
-  --blue-700: #18312f;
-
-  /* SNOW — warm near-white neutrals, used for TEXT (~30% of the time) -------- */
-  --snow-100: #fbf5f3; /* ANCHOR — primary text */
-  --snow-200: #bcb8b6;
-  --snow-300: #7f7b7a;
-  --snow-400: #3f3e3d;
-
-  /* BLACK — neutral darks, used for the BACKGROUND (~60% of the time) -------- */
-  --black-100: #c0c0bf;
-  --black-200: #80807f;
-  --black-300: #424240;
-  --black-400: #020300; /* ANCHOR — page background */
+  /* THEME — the accent AND its on-color, left untouched by the base (rule 3).
+     Same lightness convention as the base ramp: 100 = lightest, number goes UP
+     as it gets darker; 300 is the anchor. ---------------------------------- */
+  --theme-100: #ecfeff; /* lightest — text/icon that sits ON a theme surface */
+  --theme-300: #015f79; /* ANCHOR — the theme color itself (brand accent) */
 }
 
 
 /* -------------------------------------------------------------------------
    LAYER 2 — THE ROLES (semantic)
    Names by JOB. Each one POINTS AT a Layer-1 color. The app reads these,
-   never the raw palette. To re-theme, you change a pointer here (one line)
-   and it flows everywhere that uses that job.
-
-   These are the DARK-MODE values.
+   never the raw palette. To re-theme, change a pointer here (one line) and
+   it flows everywhere that uses that job. These are the DARK-MODE values.
    ------------------------------------------------------------------------- */
 
 .ds-scope {
   /* SURFACES ---------------------------------------------------------------- */
-  --background: var(--black-400); /* the page behind everything (60%) */
-  /* --surface: TODO — the color of a card/box sitting ON the background.
-     We're deciding this later; may need a new step between --black-400 and
-     --black-300 so cards don't look like they float. */
+  --background: var(--base-500); /* the page behind everything (60%) */
+  --surface: var(--base-400);    /* a card / box sitting ON the background */
 
   /* TEXT (30%) -------------------------------------------------------------- */
-  --text-primary: var(--snow-100); /* main reading text */
-  --text-secondary: var(--snow-200); /* slightly dimmer text */
-  --text-muted: var(--snow-300); /* hints, placeholders, timestamps */
+  --text-primary: var(--base-100);   /* main reading text */
+  --text-secondary: var(--base-200); /* slightly dimmer text */
+  --text-muted: var(--base-200);     /* hints, placeholders, timestamps */
+  --text-faint: var(--base-350);     /* "even more muted" — the dimmest text */
 
-  /* BRAND / ACCENT (10%) ---------------------------------------------------- */
-  --brand: var(--yellow-400); /* main buttons, links — used sparingly */
-  --on-brand: var(--black-400); /* text/icon placed ON a brand-filled button
-                                   (dark text on yellow, so it stays readable) */
+  /* BRAND / THEME (10%) ----------------------------------------------------- */
+  --brand: var(--theme-300);      /* main buttons, links — used sparingly */
+  --on-brand: var(--theme-100); /* text/icon placed ON a brand-filled surface
+                                   (the theme's own light on-color) */
 
-  /* BORDERS ----------------------------------------------------------------- */
-  --border: var(--black-300); /* lines around inputs, cards, dividers */
-
-  /* SEMANTIC STATES --------------------------------------------------------- */
-  /* NOTE: these point at the ANCHOR (the family's identity color). When we
-     build components we'll likely add readable companions per job, e.g. a
-     lighter "-text" version for text on the dark background and a darker
-     "-bg" version for a subtle banner tint. For now, the identity only. */
-  --warning: var(--orange-400);
-  --error: var(--red-400);
-  --success: var(--green-400);
-  --info: var(--blue-400); /* tips / informational messages */
+  /* BORDER ------------------------------------------------------------------ */
+  /* Its own slate shade of the base (rule 2). Every border reads this: cards,
+     search input, header, footer, dividers. */
+  --border: var(--base-375); /* lines around inputs, cards, header/footer, dividers */
 }
 
 
 /* =========================================================================
-   TYPOGRAPHY
+   TYPOGRAPHY  (from the rules frame)
    =========================================================================
-   Font family (one for now — Geist), a tight size scale, and a matching
-   line-height for every size. A size and its line-height are a PAIR: use
-   --text-body-md together with --leading-body-md and never mix them up.
-
-   Line-height rule: body text is roomy (~1.5x) for readability; headings
-   are tighter, and get tighter as they grow. All values are adjustable.
+   Font family (Geist), a 3-step size scale (each with its own line-height),
+   two weights, and three semantic text roles. A size and its line-height
+   are a PAIR — use them together and never mix them up.
    ========================================================================= */
 
 .ds-scope {
@@ -149,86 +112,56 @@
   --font-sans: "Geist Variable", sans-serif;
 
   /* FONT WEIGHTS ------------------------------------------------------------ */
-  --font-weight-regular: 400; /* body text */
-  --font-weight-semibold: 600; /* subheadings, emphasis */
-  --font-weight-bold: 700; /* headings */
+  --font-weight-regular: 400; /* body, grid */
+  --font-weight-bold:700;    /* headings */
 
-  /* FONT SIZES -------------------------------------------------------------- */
-  /* Body — the everyday text. body-md (16px) is the normal/default size. */
-  --text-body-sm: 12px;
-  --text-body-md: 16px; /* DEFAULT normal text */
-  --text-body-lg: 20px;
+  /* FONT SIZES + matching LINE HEIGHTS (size/lh are a pair) ----------------- */
+  --text-sm: 14px; --leading-sm: 21px; /* small */
+  --text-md: 16px; --leading-md: 24px; /* medium — the default */
+  --text-lg: 20px; --leading-lg: 24px; /* large */
 
-  /* Headings — h6 (smallest) up to h1 (largest). */
-  --text-h6: 20px;
-  --text-h5: 24px;
-  --text-h4: 32px;
-  --text-h3: 40px;
-  --text-h2: 48px;
-  --text-h1: 60px;
-
-  /* LINE HEIGHTS (one per size above, same names) --------------------------- */
-  --leading-body-sm: 20px;
-  --leading-body-md: 24px;
-  --leading-body-lg: 32px;
-
-  --leading-h6: 24px;
-  --leading-h5: 28px;
-  --leading-h4: 40px;
-  --leading-h3: 48px;
-  --leading-h2: 56px;
-  --leading-h1: 72px;
-
-  /* PARAGRAPH SPACING ------------------------------------------------------- */
-  /* The VERTICAL gap between stacked paragraphs of body text (NOT the gap
-     between letters — that's letter-spacing/tracking, added later if needed). */
-  --paragraph-body-sm: 16px;
-  --paragraph-body-md: 16px;
-  --paragraph-body-lg: 20px;
-
-  --paragraph-h6: 28px;
-  --paragraph-h5: 28px;
-  --paragraph-h4: 32px;
-  --paragraph-h3: 36px;
-  --paragraph-h2: 40px;
-  --paragraph-h1: 48px;
+  /* SEMANTIC TEXT ROLES (size + line-height + weight, exactly as spec'd) ---- */
+  --text-heading: 20px; --leading-heading: 24px; --weight-heading: 700;
+  --text-body: 16px;    --leading-body: 24px;    --weight-body: 400;
+  --text-grid: 14px;    --leading-grid: 21px;    --weight-grid: 400;
 }
 
 
 /* =========================================================================
-   RADIUS  (corner roundness)
-   =========================================================================
-   Same approach shadcn uses: ONE base value, and the whole scale is derived
-   from it with math. Change --radius and every step scales proportionally,
-   so small controls keep small corners and large surfaces keep larger ones.
-
-   base = 0.625rem = 10px.  Steps: sm 6 / md 8 / lg 10 / xl 14 / 2xl 18 /
-   3xl 22 / 4xl 26 (px).  Typical use: inputs/buttons -> sm/md, cards -> lg/xl.
+   RADIUS  (corner roundness — from the rules frame)
    ========================================================================= */
 
 .ds-scope {
-  --radius: 0.625rem; /* the base — everything below scales from this */
-
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-sm: 8px;      /* small */
+  --radius-md: 10px;     /* medium */
+  --radius-lg: 12px;     /* large */
   --radius-full: 9999px; /* pills & circles (avatars, toggles) */
+}
+
+
+/* =========================================================================
+   ICON SIZES  (glyph dimensions)
+   =========================================================================
+   The size of a lucide icon glyph. Two steps: the everyday small icon, and the
+   large one (the FAB "+"). (A 20px middle step is still used raw in a few spots
+   and not yet tokenised.)
+   ========================================================================= */
+
+.ds-scope {
+  --icon-sm: 16px; /* default icon (search, stat rows, chevrons, checks) */
+  --icon-lg: 32px; /* large — the floating "+" */
 }
 
 
 /* =========================================================================
    BORDER WIDTH
    =========================================================================
-   No scale needed here — 1px covers almost everything (borders, dividers,
-   input outlines). A 2px option exists for focus rings / emphasis.
+   Not specified in the rules frame — kept from before. 1px covers almost
+   everything (borders, dividers, input outlines); 2px for focus / emphasis.
    ========================================================================= */
 
 .ds-scope {
-  --border-width: 1px; /* default: borders, dividers, input outlines */
+  --border-width: 1px;       /* default: borders, dividers, input outlines */
   --border-width-thick: 2px; /* focus rings, emphasis */
 }
 
@@ -236,8 +169,9 @@
 /* =========================================================================
    SPACING  (padding, margins, gaps between elements)
    =========================================================================
-   One shared scale, used for ALL padding / margin / gap so rhythm stays
-   consistent across the app. Steps roughly double as they grow.
+   Not specified in the rules frame — kept from before. One shared scale used
+   for ALL padding / margin / gap so rhythm stays consistent. Steps roughly
+   double as they grow.
    ========================================================================= */
 
 .ds-scope {
@@ -245,9 +179,55 @@
   --space-sm: 8px;
   --space-md: 12px;
   --space-lg: 16px;
-  --space-xl: 20px;
-  --space-2xl: 24px;
-  --space-3xl: 32px;
-  --space-4xl: 48px;
 }
 
+
+/* =========================================================================
+   SHADCN SIDEBAR BRIDGE  (alias layer — NOT new design tokens)
+   =========================================================================
+   The shadcn <Sidebar> paints itself from its own --sidebar* variables
+   (defined in globals.css, the OLD palette). These are not new tokens; they
+   just re-point that third-party component's variables at OUR semantic roles
+   so the dev gallery's sidebar matches the new design system. Because
+   globals.css maps the Tailwind utilities as --color-sidebar: var(--sidebar),
+   redefining the plain --sidebar* here inside `.ds-scope` flows straight into
+   `bg-sidebar`, `text-sidebar-foreground`, etc. Only used by the gallery.
+   ------------------------------------------------------------------------- */
+
+.ds-scope {
+  --sidebar: var(--surface);                     /* panel = a card */
+  --sidebar-foreground: var(--text-primary);
+  --sidebar-border: var(--border);
+  --sidebar-accent: var(--background);           /* item hover (subtle darken) */
+  --sidebar-accent-foreground: var(--text-primary);
+  --sidebar-primary: var(--brand);               /* active / selected accent */
+  --sidebar-primary-foreground: var(--on-brand);
+  --sidebar-ring: var(--brand);                  /* focus ring */
+}
+
+
+/* =========================================================================
+   SHADCN COLOR BRIDGE  (alias layer — NOT new design tokens)
+   =========================================================================
+   Shared shadcn components (Button, Calendar, Tooltip, Skeleton...) paint
+   themselves from shadcn's own semantic variables, defined in globals.css with
+   the OLD palette. These are NOT new tokens; they re-point those variables at
+   OUR roles so any shadcn component rendered inside `.ds-scope` adopts the new
+   design system with zero per-component overrides. --background and --border
+   already carry our values (same names), so only the rest are aliased here.
+   ------------------------------------------------------------------------- */
+
+.ds-scope {
+  --foreground: var(--text-primary);
+  --muted: var(--surface);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--border);                 /* subtle raised / hover fill (base-375 grey) */
+  --accent-foreground: var(--text-primary);
+  --primary: var(--brand);                 /* filled / selected (e.g. picked day) */
+  --primary-foreground: var(--on-brand);
+  --ring: var(--brand);                    /* focus ring */
+  --popover: var(--surface);
+  --popover-foreground: var(--text-primary);
+  --card: var(--surface);
+  --card-foreground: var(--text-primary);
+}
