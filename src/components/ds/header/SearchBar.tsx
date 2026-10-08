@@ -35,7 +35,7 @@ function SearchBar({
         placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-9 w-full rounded-[var(--radius-full)] border border-[var(--border)] bg-transparent pr-10 pl-10 text-[length:var(--text-sm)] outline-none placeholder:text-[var(--text-muted)] focus-visible:border-[var(--brand)]"
+        className="h-9 w-full rounded-[var(--radius-full)] border border-[var(--border)] bg-transparent pr-10 pl-10 text-[length:var(--text-sm)] outline-none placeholder:text-[var(--text-muted)] focus-visible:border-[var(--border-hover)] focus-visible:shadow-[var(--shadow-focus)]"
         style={{ color: "var(--text-primary)" }}
       />
       {value && onClear && (

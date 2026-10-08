@@ -33,13 +33,15 @@ const tokenDefs = [...dsCss.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map((m) => [
 const definedTokens = new Set(tokenDefs.map(([name]) => name))
 // px value -> token name, per category (Tailwind value * 4 = px for the scale).
 const spacePx = {}
-const iconPx = {}
+const sizePx = {} // icon + control footprints
 const radiusNamed = {} // sm|md|lg|full -> token
+const shadowNamed = {} // sm|md|lg|... -> token
 for (const [name, val] of tokenDefs) {
   const px = /^(\d+)px$/.exec(val)?.[1]
   if (name.startsWith('--space-') && px) spacePx[px] = name
-  if (name.startsWith('--icon-') && px) iconPx[px] = name
+  if ((name.startsWith('--icon-') || name.startsWith('--control-')) && px) sizePx[px] = name
   if (name.startsWith('--radius-')) radiusNamed[name.slice('--radius-'.length)] = name
+  if (name.startsWith('--shadow-')) shadowNamed[name.slice('--shadow-'.length)] = name
 }
 // runtime / component-local vars set in code, not design tokens.
 const allowedLocalVars = new Set([
@@ -56,6 +58,7 @@ const SPACING_RE =
 const SIZE_RE = /(?<![\w-])size-(\d+(?:\.\d+)?)(?![\w.-])/g
 const RADIUS_RE =
   /(?<![\w-])(rounded(?:-(?:t|b|l|r|tl|tr|bl|br|ss|se|es|ee|s|e))?)-(sm|md|lg|full)(?![\w-])/g
+const SHADOW_RE = /(?<![\w-])shadow-(sm|md|lg|xl|2xl|inner|none)(?![\w-])/g
 
 // Bare Tailwind COLOR utilities: a colour utility prefix + a named colour value.
 // Colour must come from a new-design-system token (`bg-[var(--surface)]`), never
@@ -111,11 +114,11 @@ const galleryTokenRule = {
       }
       for (const m of text.matchAll(SIZE_RE)) {
         const px = String(parseFloat(m[1]) * 4)
-        if (iconPx[px]) {
+        if (sizePx[px]) {
           context.report({
             node,
             messageId: 'tailwindClass',
-            data: { cls: m[0], px, fix: `size-[var(${iconPx[px]})]` },
+            data: { cls: m[0], px, fix: `size-[var(${sizePx[px]})]` },
           })
         }
       }
@@ -126,6 +129,16 @@ const galleryTokenRule = {
             node,
             messageId: 'tailwindClass',
             data: { cls: m[0], px: m[2], fix: `${m[1]}-[var(${token})]` },
+          })
+        }
+      }
+      for (const m of text.matchAll(SHADOW_RE)) {
+        const token = shadowNamed[m[1]]
+        if (token) {
+          context.report({
+            node,
+            messageId: 'tailwindClass',
+            data: { cls: m[0], px: m[1], fix: `boxShadow: var(${token})` },
           })
         }
       }
@@ -168,7 +181,7 @@ export default defineConfig([
   // Strict token guard — only the gallery and its components.
   {
     files: [
-      'src/Gallery.tsx',
+      'src/gallery/**/*.{ts,tsx}',
       'src/components/gallery/**/*.{ts,tsx}',
       'src/components/ds/**/*.{ts,tsx}',
       'src/hooks/useGalleryControls.ts',

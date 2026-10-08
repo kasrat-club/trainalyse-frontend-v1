@@ -10,7 +10,7 @@ type LogoProps = { className?: string }
 function Logo({ className }: LogoProps) {
   return (
     <div
-      className={cn("flex size-9 shrink-0 items-center justify-center", className)}
+      className={cn("flex size-[var(--control-sm)] shrink-0 items-center justify-center", className)}
       style={{
         borderRadius: "var(--radius-full)",
         border: "var(--border-width) solid var(--brand)",

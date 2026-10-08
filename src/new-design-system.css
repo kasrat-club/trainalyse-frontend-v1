@@ -24,17 +24,25 @@
    `:root` here and wire the shadcn bridge.
 
 
-   COLOR RULES (from the rules frame)
-   ----------------------------------
-   1. Two colors to begin with: a BASE color and a THEME color.
-   2. The base color defines the surface and background. The background, the
-      card surface, borders and the neutral text are all just SHADES of the
-      one base color (lighter / brighter / less-saturated versions of it).
-   3. The theme color is untouched in every case: whatever the base color is,
-      it never changes the theme color.
+   COLOR MODEL  (from the "new theme 1" frame in Paper)
+   ----------------------------------------------------
+   Four colour CLASSES, each a single colour spread into shades. Inside a
+   class, a ROLE is pinned to a fixed step, so the role is consistent app-wide.
 
-      Base color  = slate (#67787C)
-      Theme color = teal  (#015F79)
+   1. BACKGROUND class (deep navy) — the page background, card surface, borders
+      and the surface "shadow" are all shades of this one navy.
+   2. TEXT class (neutral grey) — primary / muted / tertiary text are shades of
+      one grey. (Separate from the background class on purpose.)
+   3. BRAND class (warm amber) — the accent, used sparingly. Untouched by the
+      others. Because it is LIGHT, text that sits ON brand is the dark navy.
+   4. DANGER class (red) — destructive actions only. A deliberate STATE colour.
+
+      Background = deep navy  (#0A1130)
+      Text       = off-white  (#EAECF5)
+      Brand      = warm amber  (#FFBA09)
+
+   NOTE ON NAMING: the text-colour primitives are --ink-* (not --text-*),
+   because --text-* is the font-SIZE namespace lower in this file.
    ========================================================================= */
 
 
@@ -47,25 +55,39 @@
    ------------------------------------------------------------------------- */
 
 .ds-scope {
-  /* BASE — the one neutral (slate-leaning). Background + surface + text are
-     all shades of this. --------------------------------------------------- */
-  --base-100: #fafbfb; /* lightest — primary text */
-  --base-200: #9ca8aa; /* muted / secondary text */
-  --base-300: #67787c; /* ANCHOR — the base color itself */
-  --base-350: #666666; /* neutral (untinted) — the "even more muted" text step,
-                          dimmer than base-200; sits between the anchor and the
-                          surface by lightness */
-  --base-375: #333839; /* slate — the border/edge color (cards, inputs, header,
-                          footer, dividers); a step above the surface so edges
-                          read on a dark card */
-  --base-400: #161b1d; /* card / surface */
-  --base-500: #090b0c; /* darkest — page background */
+  /* BACKGROUND — the navy. Page background, card surface, borders + the surface
+     "shadow" are all shades of this. --------------------------------------- */
+  --bg-100: #cecfd6; /* lightest — surface "shadow" (see role note) */
+  --bg-200: #9ea0ac; /* border — hover state */
+  --bg-300: #6c7084; /* border — default */
+  --bg-350: #3b405a; /* hover fill for NEUTRAL controls (chevron, calendar, …) */
+  --bg-400: #1f2743; /* card / surface */
+  --bg-500: #0a1130; /* darkest — page background */
 
-  /* THEME — the accent AND its on-color, left untouched by the base (rule 3).
-     Same lightness convention as the base ramp: 100 = lightest, number goes UP
-     as it gets darker; 300 is the anchor. ---------------------------------- */
-  --theme-100: #ecfeff; /* lightest — text/icon that sits ON a theme surface */
-  --theme-300: #015f79; /* ANCHOR — the theme color itself (brand accent) */
+  /* TEXT — the neutral grey. Primary / muted / tertiary text are shades of it.
+     (Named --ink-* so it doesn't collide with the font-size --text-* scale.) */
+  --ink-50: #eff0f8;  /* brighter than primary — text/icon lightens to this on hover */
+  --ink-100: #eaecf5; /* lightest — primary text */
+  --ink-200: #bcbdc5; /* muted / secondary text */
+  --ink-300: #8d8e93; /* tertiary — dimmest readable text */
+  --ink-400: #5e5e62; /* extra (role undecided) — disabled text / divider */
+  --ink-500: #2f2f31; /* extra (role undecided) — darkest */
+
+  /* BRAND — the amber accent, left untouched by the others. 300 is the anchor;
+     it is LIGHT, so on-brand text is the dark navy, not a light colour. ----- */
+  --brand-100: #ffdd97; /* lightest — subtle brand tint / hover fill */
+  --brand-200: #ffcc60; /* light */
+  --brand-300: #ffba09; /* ANCHOR — the brand colour itself */
+  --brand-400: #cb9723; /* dark — pressed / brand-on-light */
+  --brand-500: #97752d; /* darkest */
+
+  /* DANGER — the red for destructive actions (delete / discard). A deliberate
+     STATE colour, outside the background / text / brand model. 300 anchors. */
+  --red-100: #ffb3b4; /* lightest — solid base for the destructive hover (used at 20% alpha via --surface-hover-danger) */
+  --red-200: #ff8d8f; /* lighter — the destructive border AND the hover (via --danger-hover) */
+  --red-300: #ff6468; /* ANCHOR — the main error colour (the icon) */
+  --red-400: #cb575b; /* darker — pressed */
+  --red-500: #803235; /* darkest — no role yet, reserved for future use */
 }
 
 
@@ -78,24 +100,38 @@
 
 .ds-scope {
   /* SURFACES ---------------------------------------------------------------- */
-  --background: var(--base-500); /* the page behind everything (60%) */
-  --surface: var(--base-400);    /* a card / box sitting ON the background */
+  --background: var(--bg-500); /* the page behind everything (60%) */
+  --surface: var(--bg-400);    /* a card / box sitting ON the background */
+  --surface-hover: var(--bg-350);         /* fill a NEUTRAL button gets on hover (#3B405A) */
+  --surface-hover-danger: #ffb3b417;      /* destructive button hover fill — #FFB3B4 (red-100) at ~9% alpha */
+  --surface-shadow: var(--bg-300); /* NOTE: still a LIGHT-ish navy, not a real
+                                      dark-mode shadow (those are black+alpha, see
+                                      --shadow-lg below). Reads as a tint/edge, not
+                                      a cast shadow. Kept as spec'd; revisit the role. */
 
   /* TEXT (30%) -------------------------------------------------------------- */
-  --text-primary: var(--base-100);   /* main reading text */
-  --text-secondary: var(--base-200); /* slightly dimmer text */
-  --text-muted: var(--base-200);     /* hints, placeholders, timestamps */
-  --text-faint: var(--base-350);     /* "even more muted" — the dimmest text */
+  --text-primary: var(--ink-100);   /* main reading text */
+  --text-secondary: var(--ink-200); /* slightly dimmer text */
+  --text-muted: var(--ink-200);     /* hints, placeholders, timestamps */
+  --text-faint: var(--ink-300);     /* tertiary — the dimmest readable text */
+  --text-hover: var(--ink-50);      /* text/icon lightens to this on hover (non-destructive) */
 
-  /* BRAND / THEME (10%) ----------------------------------------------------- */
-  --brand: var(--theme-300);      /* main buttons, links — used sparingly */
-  --on-brand: var(--theme-100); /* text/icon placed ON a brand-filled surface
-                                   (the theme's own light on-color) */
+  /* BRAND (10%) ------------------------------------------------------------- */
+  --brand: var(--brand-300);       /* main buttons, links — used sparingly */
+  --brand-hover: var(--brand-200); /* lighter amber for hover on brand elements */
+  --on-brand: var(--bg-500);       /* text/icon ON a brand-filled surface. Brand
+                                      is LIGHT amber, so this is the dark navy —
+                                      never a light colour (would fail contrast). */
+
+  /* DANGER (destructive actions — delete / discard). ------------------------ */
+  --danger: var(--red-300);        /* border + icon */
+  --danger-hover: var(--red-200);  /* lighter red — hover / border */
 
   /* BORDER ------------------------------------------------------------------ */
-  /* Its own slate shade of the base (rule 2). Every border reads this: cards,
+  /* A navy shade of the background class. Every border reads this: cards,
      search input, header, footer, dividers. */
-  --border: var(--base-375); /* lines around inputs, cards, header/footer, dividers */
+  --border: var(--bg-200);         /* lines around inputs, cards, header/footer, dividers */
+  --border-hover: var(--bg-100);   /* lighter navy — border hover state */
 }
 
 
@@ -154,6 +190,34 @@
 
 
 /* =========================================================================
+   CONTROL SIZES  (button / control footprints)
+   =========================================================================
+   Only TWO button sizes: the standard control, and the FAB as the one
+   deliberate exception. Nothing else.
+   ========================================================================= */
+
+.ds-scope {
+  --control-sm: 36px; /* standard — header buttons, calendar chips, banner circles */
+  --control-lg: 60px; /* the FAB — the one exception */
+}
+
+
+/* =========================================================================
+   SHADOW / ELEVATION
+   =========================================================================
+   Drop shadow for raised, floating elements (the banner pill, the FAB).
+   ========================================================================= */
+
+.ds-scope {
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Focus glow — an even, all-directions soft ring in the surface-shadow colour
+     (#6C7084). Used on inputs so a focused field reads clearly on the dark bg. */
+  --shadow-focus: 0 0 0 3px color-mix(in srgb, var(--surface-shadow) 45%, transparent);
+}
+
+
+/* =========================================================================
    BORDER WIDTH
    =========================================================================
    Not specified in the rules frame — kept from before. 1px covers almost
@@ -179,6 +243,19 @@
   --space-sm: 8px;
   --space-md: 12px;
   --space-lg: 16px;
+}
+
+
+/* =========================================================================
+   CONTAINER / LAYOUT
+   =========================================================================
+   The app is a mobile layout; everything lives in a single column capped at
+   this width (and centered on wider screens). The Gallery's home mock caps to
+   it so the components render at their real mobile size.
+   ========================================================================= */
+
+.ds-scope {
+  --container-app: 430px; /* mobile viewport max-width (iPhone 14 Pro Max) */
 }
 
 

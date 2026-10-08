@@ -6,9 +6,10 @@ import { cn } from "@/lib/utils"
 // bottom-right on Home. A brand-filled circle with a light "+" on top. Purely
 // presentational: it takes an onClick but does nothing on its own.
 //
-// TOKENS: colour, corner and the icon size are new-design-system tokens
-// (--brand, --on-brand, --radius-full, --icon-lg). The 60px control size and the
-// drop shadow have NO token yet — see [[gallery-strict-tokens]] (deferred).
+// TOKENS: all new-design-system tokens — --brand (+ --brand-hover on hover),
+// --on-brand, --radius-full,
+// --icon-lg, --shadow-lg, and --control-lg for the 60px footprint (the FAB is
+// the one deliberate exception to the standard --control-sm button size).
 
 type AddWorkoutButtonProps = {
   onClick?: () => void
@@ -22,16 +23,16 @@ function AddWorkoutButton({ onClick, className }: AddWorkoutButtonProps) {
       aria-label="Add workout"
       onClick={onClick}
       className={cn(
-        "flex size-[60px] items-center justify-center shadow-lg transition-opacity hover:opacity-90",
+        "flex size-[var(--control-lg)] items-center justify-center bg-[var(--brand)] transition-colors hover:bg-[var(--brand-hover)]",
         className,
       )}
       style={{
-        background: "var(--brand)",
         color: "var(--on-brand)",
         borderRadius: "var(--radius-full)",
+        boxShadow: "var(--shadow-lg)",
       }}
     >
-      <Plus className="size-[var(--icon-lg)]" strokeWidth={2.5} />
+      <Plus className="size-[var(--icon-lg)]" />
     </button>
   )
 }

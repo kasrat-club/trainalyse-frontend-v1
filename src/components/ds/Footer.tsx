@@ -40,10 +40,13 @@ function Footer({ tabs, active, onChange }: FooterProps) {
               aria-label={`Go to ${tab.label}`}
               aria-current={isActive ? "page" : undefined}
               onClick={() => onChange(tab.id)}
-              className="flex flex-col items-center gap-[var(--space-xs)] px-0 transition-colors"
-              style={{ color: isActive ? "var(--text-primary)" : "var(--text-muted)" }}
+              className={`flex flex-col items-center gap-[var(--space-xs)] px-0 transition-colors ${
+                isActive
+                  ? "text-[var(--brand)]"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              }`}
             >
-              <Icon className="size-[var(--icon-sm)]" strokeWidth={1.2} />
+              <Icon className="size-[var(--icon-sm)]" />
               <span
                 style={{
                   fontSize: "var(--text-sm)",

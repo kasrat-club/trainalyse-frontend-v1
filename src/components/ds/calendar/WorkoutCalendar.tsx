@@ -1,7 +1,8 @@
-import { X } from "lucide-react"
+import { ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Calendar, CalendarDayButton } from "@/components/ui/calendar"
+import IconButton from "@/components/ds/IconButton"
 
 // WorkoutCalendar — DUMB. The home "search by date" calendar, rebuilt on the new
 // design system and NOT a modal: it sits inline on the page at all times. It
@@ -23,10 +24,11 @@ type WorkoutCalendarProps = {
   onClose: () => void
 }
 
-// circular grey control chip — the close and month-nav buttons. Uses the border
-// grey (base-375) as its fill, matching Home's solid grey circles.
+// outline control chip for the month-nav buttons (rendered by react-day-picker
+// via classNames, so they can't be our IconButton). Kept visually identical to
+// the outline IconButton (close button) — same border, size and hover.
 const chip =
-  "flex size-9 items-center justify-center rounded-[var(--radius-full)] bg-[var(--border)] p-0 text-[var(--text-primary)] transition-[filter] hover:brightness-125 select-none aria-disabled:opacity-50"
+  "flex size-[var(--control-sm)] items-center justify-center rounded-[var(--radius-full)] border border-[var(--border)] bg-transparent p-0 text-[var(--text-primary)] transition-colors hover:bg-[var(--surface-hover)] hover:border-[var(--border-hover)] hover:text-[var(--text-hover)] select-none aria-disabled:opacity-50"
 
 function WorkoutCalendar({
   month,
@@ -46,9 +48,7 @@ function WorkoutCalendar({
       }}
     >
       <div className="flex justify-end">
-        <button type="button" aria-label="Close calendar" onClick={onClose} className={chip}>
-          <X className="size-[var(--icon-sm)]" strokeWidth={2} />
-        </button>
+        <IconButton variant="outline" icon={X} aria-label="Close calendar" onClick={onClose} />
       </div>
 
       <Calendar
@@ -86,22 +86,46 @@ function WorkoutCalendar({
           caption_after_exit: "cal-caption-after-exit",
         }}
         components={{
+          // override shadcn's chevron (a hard size-4) so the nav + dropdown
+          // glyphs use our --icon-sm token instead of a literal pixel size.
+          Chevron: ({ className, orientation, ...props }) => {
+            const Icon =
+              orientation === "left"
+                ? ChevronLeft
+                : orientation === "right"
+                  ? ChevronRight
+                  : ChevronDown
+            return <Icon className={cn("size-[var(--icon-sm)]", className)} {...props} />
+          },
           DayButton: (dayProps) => (
             <CalendarDayButton
               {...dayProps}
               className={cn(
                 dayProps.className,
+                // Every day indicator is a CIRCLE and every fill lives in one inset
+                // ::before pseudo, so selected / logged are the exact same size.
+                // Neutralise shadcn's full-cell selected bg AND the ghost full-cell
+                // hover box so this component fully controls fill + hover.
+                // rounded-full is !important to beat the parent cell's leftover
+                // range rounding (rounded-l/r-(--cell-radius)) that shadcn forces on
+                // the FIRST/LAST column's selected button — otherwise the focus ring
+                // follows a mixed radius and renders as a "bell" on edge days.
+                "rounded-[var(--radius-full)]! data-[selected-single=true]:bg-transparent hover:bg-transparent dark:hover:bg-transparent before:absolute before:inset-[4px] before:-z-10 before:rounded-[var(--radius-full)] before:content-['']",
+                // SELECTED: bright-amber (--brand) fill; on hover it brightens to
+                // --brand-hover and the navy number stays navy.
+                "data-[selected-single=true]:before:bg-[var(--brand)] data-[selected-single=true]:hover:before:bg-[var(--brand-hover)] data-[selected-single=true]:hover:text-[var(--on-brand)] dark:data-[selected-single=true]:hover:text-[var(--on-brand)]",
+                // PLAIN day hover: a faint --surface-hover circle + text lightup.
+                "hover:before:bg-[var(--surface-hover)] hover:text-[var(--text-hover)] dark:hover:text-[var(--text-hover)]",
                 // days spilling in from the neighbouring month
                 dayProps.modifiers.outside && "text-[var(--text-faint)]",
-                // a logged day: a translucent brand fill inset behind the number
-                // (inset-4 so back-to-back logged days don't touch)
+                // LOGGED: dark-gold (--brand-500) fill + navy number; on hover the
+                // gold brightens one step to --brand-400 and the number stays navy.
                 dayProps.modifiers.logged &&
-                  "before:absolute before:inset-[4px] before:-z-10 before:rounded-[var(--cell-radius)] before:bg-[color-mix(in_srgb,var(--brand)_25%,transparent)] before:content-['']",
-                // today: a brand ring only — the number keeps the normal in-month
-                // text colour so it stays readable. drawn with after: so a
-                // logged+today day keeps its fill too.
+                  "text-[var(--on-brand)] before:bg-[var(--brand-500)] hover:before:bg-[var(--brand-400)] hover:text-[var(--on-brand)] dark:hover:text-[var(--on-brand)]",
+                // TODAY: a brand ring (never a fill) that brightens to the lightest
+                // brand (--brand-100) on hover. after: so logged+today keeps its fill.
                 dayProps.modifiers.today &&
-                  "after:absolute after:inset-[4px] after:rounded-[var(--radius-full)] after:border-2 after:border-[var(--brand)] after:content-['']",
+                  "after:absolute after:inset-[4px] after:rounded-[var(--radius-full)] after:border-2 after:border-[var(--brand)] after:content-[''] hover:after:border-[var(--brand-100)]",
               )}
             />
           ),
@@ -124,8 +148,8 @@ function WorkoutCalendar({
           <span
             className="size-[var(--icon-sm)]"
             style={{
-              borderRadius: "var(--radius-sm)",
-              background: "color-mix(in srgb, var(--brand) 25%, transparent)",
+              borderRadius: "var(--radius-full)",
+              background: "var(--brand-500)",
             }}
           />
           Logged Workout
@@ -133,9 +157,11 @@ function WorkoutCalendar({
         <button
           type="button"
           onClick={() => onMonthChange(new Date())}
-          className="flex items-center gap-[var(--space-sm)] outline-none transition-colors hover:text-[var(--text-primary)]"
+          // on hover the text lights up to --text-hover and the brand ring glows
+          // to the lightest brand (--brand-100).
+          className="group flex items-center gap-[var(--space-sm)] outline-none transition-colors hover:text-[var(--text-hover)]"
         >
-          <span className="size-[var(--icon-sm)] rounded-[var(--radius-full)] ring-2 ring-inset ring-[var(--brand)]" />
+          <span className="size-[var(--icon-sm)] rounded-[var(--radius-full)] ring-2 ring-inset ring-[var(--brand)] transition-shadow group-hover:ring-[var(--brand-100)]" />
           Jump to today
         </button>
       </div>

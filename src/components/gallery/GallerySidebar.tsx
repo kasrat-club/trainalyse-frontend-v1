@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Link, useLocation } from "react-router-dom"
 import { Check, ChevronDown } from "lucide-react"
 
 import type { GalleryControls } from "@/hooks/useGalleryControls"
@@ -9,7 +10,30 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar"
+
+// The gallery's pages. The sidebar navigates between them; the routes live in
+// main.tsx. Overview is the "all components on one page" view; the rest segregate
+// by component type.
+const PAGES = [
+  { to: "/Gallery", label: "Overview" },
+  { to: "/Gallery/buttons", label: "Buttons" },
+  { to: "/Gallery/icons", label: "Icons" },
+  { to: "/Gallery/cards", label: "Cards" },
+  { to: "/Gallery/modals", label: "Modals" },
+  { to: "/Gallery/inputs", label: "Inputs" },
+  { to: "/Gallery/badges", label: "Badges" },
+  { to: "/Gallery/avatar", label: "Avatar" },
+  { to: "/Gallery/dropdown", label: "Dropdown" },
+  { to: "/Gallery/calendar", label: "Calendar" },
+  { to: "/Gallery/navigation", label: "Navigation" },
+  { to: "/Gallery/banner", label: "Banner" },
+  { to: "/Gallery/typography", label: "Typography" },
+  { to: "/Gallery/colors", label: "Colors" },
+]
 
 // GallerySidebar — DUMB. The control panel for the token playground, built on
 // the shadcn <Sidebar>. Props in (knob values + setters), JSX out. All state
@@ -30,6 +54,8 @@ function GallerySidebar({
   setFontWeight,
   fontWeightOptions,
 }: GalleryControls) {
+  const { pathname } = useLocation()
+
   return (
     <Sidebar>
       <SidebarHeader className="px-[var(--space-lg)] py-[var(--space-lg)]">
@@ -40,7 +66,7 @@ function GallerySidebar({
             fontWeight: "var(--font-weight-bold)",
           }}
         >
-          Controls
+          Design system
         </span>
         <span
           style={{
@@ -49,11 +75,26 @@ function GallerySidebar({
             lineHeight: "var(--leading-sm)",
           }}
         >
-          Live token knobs
+          Pages &amp; token knobs
         </span>
       </SidebarHeader>
 
       <SidebarContent className="px-[var(--space-sm)]">
+        <SidebarGroup>
+          <SidebarGroupLabel>Pages</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {PAGES.map((page) => (
+                <SidebarMenuItem key={page.to}>
+                  <SidebarMenuButton asChild isActive={pathname === page.to}>
+                    <Link to={page.to}>{page.label}</Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         <SidebarGroup>
           <SidebarGroupLabel>Radius</SidebarGroupLabel>
           <SidebarGroupContent>

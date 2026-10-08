@@ -35,6 +35,7 @@ function TimelineRail({ day, month, isFirst, isLast }: TimelineRailProps) {
             color: "var(--text-muted)",
             fontSize: "var(--text-sm)",
             lineHeight: "var(--leading-sm)",
+            fontWeight: "var(--font-weight-bold)",
           }}
         >
           {month}

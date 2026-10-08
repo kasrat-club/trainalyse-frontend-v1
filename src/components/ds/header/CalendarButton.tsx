@@ -1,10 +1,11 @@
 import { CalendarIcon } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import IconButton from "@/components/ds/IconButton"
 
-// CalendarButton — DUMB. A 36px pill icon-button showing the calendar glyph.
-// It fires an onClick but deliberately does NOT open a calendar — the calendar
-// itself is a separate component. This is only the trigger shell.
+// CalendarButton — DUMB. The header's date-search button: the outline IconButton
+// with the calendar glyph. It fires onClick but opens nothing — the calendar is
+// a separate component. A thin, named wrapper over the shared IconButton so the
+// header reads clearly and the look stays identical everywhere.
 
 type CalendarButtonProps = {
   onClick?: () => void
@@ -13,17 +14,13 @@ type CalendarButtonProps = {
 
 function CalendarButton({ onClick, className }: CalendarButtonProps) {
   return (
-    <button
-      type="button"
+    <IconButton
+      variant="outline"
+      icon={CalendarIcon}
       aria-label="Search by date"
       onClick={onClick}
-      className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-[var(--radius-full)] border border-[var(--border)] bg-transparent text-[var(--text-primary)] transition-colors hover:bg-[var(--surface)]",
-        className,
-      )}
-    >
-      <CalendarIcon className="size-[var(--icon-sm)]" strokeWidth={2.25} />
-    </button>
+      className={className}
+    />
   )
 }
 
