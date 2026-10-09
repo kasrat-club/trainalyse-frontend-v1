@@ -1,9 +1,11 @@
+import { useState } from "react"
 import { Activity, Dumbbell, List } from "lucide-react"
 
 import TimelineRail from "@/components/ds/timeline/TimelineRail"
 import WorkoutDateCard, {
   type WorkoutEntry,
 } from "@/components/ds/timeline/WorkoutDateCard"
+import LoginCard from "@/components/ds/LoginCard"
 import { heading, muted } from "../styles"
 
 // Cards — the workout card in its two real states: one workout on a date, and
@@ -60,7 +62,28 @@ function Cards() {
           ]}
         />
       </section>
+
+      <section className="flex flex-col gap-[var(--space-md)]">
+        <span style={muted}>Login card — the whole login form composed from the atoms</span>
+        <div className="max-w-sm">
+          <LoginShowcase />
+        </div>
+      </section>
     </div>
+  )
+}
+
+// LoginCard is controlled, so it needs a parent holding the field values.
+function LoginShowcase() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  return (
+    <LoginCard
+      email={email}
+      password={password}
+      onEmailChange={setEmail}
+      onPasswordChange={setPassword}
+    />
   )
 }
 

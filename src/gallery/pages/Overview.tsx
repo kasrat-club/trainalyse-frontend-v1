@@ -13,7 +13,7 @@ import AddWorkoutButton from "@/components/ds/AddWorkoutButton"
 import Footer from "@/components/ds/Footer"
 import WorkoutBanner from "@/components/ds/WorkoutBanner"
 import ConfirmModal from "@/components/ds/ConfirmModal"
-import ClearDateButton from "@/components/ds/ClearDateButton"
+import PillButton from "@/components/ds/PillButton"
 import EmptyWorkouts from "@/components/ds/EmptyWorkouts"
 import NoResults from "@/components/ds/NoResults"
 import { muted } from "../styles"
@@ -159,7 +159,7 @@ function Overview() {
       <section className="flex flex-col gap-[var(--space-md)]">
         <span style={muted}>Clear Date button</span>
         <div className="flex">
-          <ClearDateButton />
+          <PillButton variant="brand">Clear Date</PillButton>
         </div>
       </section>
 

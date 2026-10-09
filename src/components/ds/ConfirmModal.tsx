@@ -36,11 +36,11 @@ function ConfirmModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-[var(--space-lg)] backdrop-blur-sm"
-      style={{ background: "rgb(0 0 0 / 0.6)" }}
+      style={{ background: "var(--scrim)" }}
       onClick={onCancel}
     >
       <div
-        className="w-full max-w-[360px] rounded-[var(--radius-lg)] border p-[var(--space-lg)]"
+        className="w-full max-w-[var(--width-dialog)] rounded-[var(--radius-lg)] border p-[var(--space-lg)]"
         style={{ background: "var(--surface)", borderColor: "var(--border)" }}
         onClick={(e) => e.stopPropagation()}
       >

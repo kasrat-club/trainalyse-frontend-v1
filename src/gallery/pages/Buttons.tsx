@@ -1,72 +1,109 @@
-import type { ReactNode } from "react"
+import type { CSSProperties, ReactNode } from "react"
 import { ChevronLeft, ChevronRight, ChevronUp, Trash2Icon, X } from "lucide-react"
 
 import IconButton from "@/components/ds/IconButton"
 import AddWorkoutButton from "@/components/ds/AddWorkoutButton"
-import ClearDateButton from "@/components/ds/ClearDateButton"
 import PillButton from "@/components/ds/PillButton"
 import CalendarButton from "@/components/ds/header/CalendarButton"
 import { heading, muted } from "../styles"
 
-// Buttons — every button used in the project, in one place. These are the REAL
-// components (the header calendar button and the shared IconButton in its
-// variants), so what shows here is exactly what ships. Icons are decorative; the
-// handlers are omitted (nothing to do in the catalog).
+// Buttons — the real button components, grouped by CLASS (the button's shape):
+// the circular IconButton, the text PillButton, and the FAB (the one floating
+// exception). Within a class, the differences are VARIANTS, not new classes —
+// same lesson as the type styles: shape is the class, intent / colour is a
+// variant (so Cancel and Discard are one class, two variants, not two classes).
 
 function Buttons() {
   return (
     <div className="flex flex-col gap-10">
       <h2 style={heading}>Buttons</h2>
 
-      <div className="flex flex-col gap-[var(--space-lg)]">
+      <ButtonClass
+        first
+        name="Icon button"
+        blurb="Round, icon only. Variants: outline (default) and destructive."
+      >
         <ButtonRow label="Calendar — header, opens date search (outline)">
           <CalendarButton />
         </ButtonRow>
-
-        <ButtonRow label="Discard — banner (destructive)">
-          <IconButton
-            variant="destructive"
-            icon={Trash2Icon}
-            aria-label="Discard workout"
-          />
-        </ButtonRow>
-
         <ButtonRow label="Resume — banner, up chevron (outline)">
           <IconButton variant="outline" icon={ChevronUp} aria-label="Resume workout" />
         </ButtonRow>
-
         <ButtonRow label="Month nav — calendar previous / next (outline)">
           <div className="flex gap-[var(--space-sm)]">
             <IconButton variant="outline" icon={ChevronLeft} aria-label="Previous month" />
             <IconButton variant="outline" icon={ChevronRight} aria-label="Next month" />
           </div>
         </ButtonRow>
-
         <ButtonRow label="Close — calendar, top-right (outline)">
           <IconButton variant="outline" icon={X} aria-label="Close calendar" />
         </ButtonRow>
-
-        <ButtonRow label="Add workout — the main FAB, bottom-right on Home (60px, brand-filled)">
-          <AddWorkoutButton />
+        <ButtonRow label="Discard — banner (destructive)">
+          <IconButton variant="destructive" icon={Trash2Icon} aria-label="Discard workout" />
         </ButtonRow>
+      </ButtonClass>
 
-        {/* Text buttons — the REAL shared components (no more inline snapshots, so
-            this catalogue and the live app can't drift): Clear Date is
-            ClearDateButton (solid brand → --brand-hover), and the modal's
-            Cancel / Discard are PillButton's neutral / destructive variants. */}
-        <ButtonRow label="Clear Date — Home, centred overlay while a date is searched (solid brand, lightens to --brand-hover)">
-          <ClearDateButton />
+      <ButtonClass
+        name="Pill button"
+        blurb="A pill with a text label. Variants: primary, brand, neutral, destructive."
+      >
+        <ButtonRow label="Login / Save — the main action (primary; light fill, navy text)">
+          <PillButton variant="primary">Login</PillButton>
         </ButtonRow>
-
-        <ButtonRow label="Cancel — confirm modal, left action (neutral pill)">
+        <ButtonRow label="Clear Date — Home overlay while a date is searched (brand; amber fill)">
+          <PillButton variant="brand">Clear Date</PillButton>
+        </ButtonRow>
+        <ButtonRow label="Cancel — confirm modal, dismiss (neutral; outline)">
           <PillButton variant="neutral">Cancel</PillButton>
         </ButtonRow>
-
-        <ButtonRow label="Discard — confirm modal, right action (destructive pill, matches the trash button)">
+        <ButtonRow label="Discard — confirm modal, confirm the danger (destructive; red outline)">
           <PillButton variant="destructive">Discard</PillButton>
         </ButtonRow>
-      </div>
+      </ButtonClass>
+
+      <ButtonClass
+        name="FAB"
+        blurb="The large floating brand circle — the app's signature 'add workout'. The one deliberate exception (60px, brand-filled)."
+      >
+        <ButtonRow label="Add workout — bottom-right on Home">
+          <AddWorkoutButton />
+        </ButtonRow>
+      </ButtonClass>
     </div>
+  )
+}
+
+// One button class: a name + blurb, a hairline separator above it (except the
+// first), then its member rows.
+function ButtonClass({
+  name,
+  blurb,
+  first = false,
+  children,
+}: {
+  name: string
+  blurb: string
+  first?: boolean
+  children: ReactNode
+}) {
+  return (
+    <section
+      className="flex flex-col gap-[var(--space-lg)]"
+      style={
+        first
+          ? undefined
+          : {
+              borderTop: "var(--border-width) solid var(--border)",
+              paddingTop: "var(--space-lg)",
+            }
+      }
+    >
+      <div className="flex flex-col gap-[var(--space-xs)]">
+        <span style={classLabel}>{name}</span>
+        <span style={muted}>{blurb}</span>
+      </div>
+      <div className="flex flex-col gap-[var(--space-lg)]">{children}</div>
+    </section>
   )
 }
 
@@ -78,6 +115,13 @@ function ButtonRow({ label, children }: { label: string; children: ReactNode }) 
       <span style={muted}>{label}</span>
     </div>
   )
+}
+
+const classLabel: CSSProperties = {
+  color: "var(--text-primary)",
+  fontSize: "var(--text-md)",
+  lineHeight: "var(--leading-md)",
+  fontWeight: "var(--font-weight-bold)",
 }
 
 export default Buttons

@@ -1,6 +1,7 @@
 import { Fragment } from "react"
 
 import { cn } from "@/lib/utils"
+import Separator from "../Separator"
 import WorkoutCardBody from "./WorkoutCardBody"
 import type { StatItem } from "./StatRow"
 
@@ -35,12 +36,7 @@ function WorkoutDateCard({ items }: WorkoutDateCardProps) {
     >
       {items.map((item, i) => (
         <Fragment key={item.id ?? i}>
-          {i > 0 && (
-            <div
-              className="mx-[var(--space-lg)]"
-              style={{ borderTop: "var(--border-width) solid var(--border)" }}
-            />
-          )}
+          {i > 0 && <Separator inset />}
           <button
             type="button"
             onClick={item.onOpen}

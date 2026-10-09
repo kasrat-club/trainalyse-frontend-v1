@@ -50,7 +50,7 @@ function WorkoutBanner({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-[var(--space-sm)]">
           <span
-            className="size-2 rounded-[var(--radius-full)]"
+            className="size-[var(--size-dot)] rounded-[var(--radius-full)]"
             style={{ background: "var(--brand)" }}
           />
           <span

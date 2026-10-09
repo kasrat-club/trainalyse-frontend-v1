@@ -35,7 +35,7 @@ function WorkoutCardBody({
         </h3>
         {showWeekday && (
           <span
-            className="mt-0.5 shrink-0"
+            className="mt-[var(--space-2xs)] shrink-0"
             style={{
               color: "var(--text-muted)",
               fontSize: "var(--text-sm)",

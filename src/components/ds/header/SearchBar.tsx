@@ -27,7 +27,7 @@ function SearchBar({
   return (
     <div className={cn("relative min-w-0 flex-1", className)}>
       <SearchIcon
-        className="pointer-events-none absolute top-1/2 left-3.5 size-[var(--icon-sm)] -translate-y-1/2"
+        className="pointer-events-none absolute top-1/2 left-[var(--input-icon-offset)] size-[var(--icon-sm)] -translate-y-1/2"
         style={{ color: "var(--text-muted)" }}
       />
       <input
@@ -35,7 +35,7 @@ function SearchBar({
         placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-9 w-full rounded-[var(--radius-full)] border border-[var(--border)] bg-transparent pr-10 pl-10 text-[length:var(--text-sm)] outline-none placeholder:text-[var(--text-muted)] focus-visible:border-[var(--border-hover)] focus-visible:shadow-[var(--shadow-focus)]"
+        className="h-[var(--control-sm)] w-full rounded-[var(--radius-full)] border border-[var(--border)] bg-transparent pr-[var(--input-icon-inset)] pl-[var(--input-icon-inset)] text-[length:var(--text-sm)] outline-none placeholder:text-[var(--text-muted)] focus-visible:border-[var(--border-hover)] focus-visible:shadow-[var(--shadow-focus)]"
         style={{ color: "var(--text-primary)" }}
       />
       {value && onClear && (
@@ -43,7 +43,7 @@ function SearchBar({
           type="button"
           aria-label="Clear search"
           onClick={onClear}
-          className="absolute top-1/2 right-3.5 -translate-y-1/2 transition-colors hover:text-[var(--text-primary)]"
+          className="absolute top-1/2 right-[var(--input-icon-offset)] -translate-y-1/2 transition-colors hover:text-[var(--text-primary)]"
           style={{ color: "var(--text-muted)" }}
         >
           <X className="size-[var(--icon-sm)]" />

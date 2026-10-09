@@ -12,14 +12,14 @@ type TimelineRailProps = {
 
 function TimelineRail({ day, month, isFirst, isLast }: TimelineRailProps) {
   // --node-y is the y of the title's centerline from the shared top: the card's
-  // top padding (--space-lg) + half the title's line box (--leading-lg 24 → 12).
+  // top padding (--space-lg) + half the title's line box (--leading-lg / 2).
   // The circle sits there; the day number is centered on it; each line half
-  // stops 16px short of node-y so there's a small gap either side of the dot.
+  // stops --space-lg short of node-y so there's a small gap either side of the dot.
   return (
-    <div className="flex items-start gap-[var(--space-sm)] [--node-y:calc(var(--space-lg)+12px)]">
-      <div className="flex w-9 flex-col items-start pt-[var(--space-lg)]">
+    <div className="flex items-start gap-[var(--space-sm)] [--node-y:calc(var(--space-lg)+var(--leading-lg)/2)]">
+      <div className="flex w-[var(--size-rail-col)] flex-col items-start pt-[var(--space-lg)]">
         <span
-          className="flex h-6 items-center"
+          className="flex h-[var(--size-rail-day)] items-center"
           style={{
             color: "var(--text-primary)",
             fontSize: "var(--text-lg)",
@@ -42,16 +42,16 @@ function TimelineRail({ day, month, isFirst, isLast }: TimelineRailProps) {
         </span>
       </div>
 
-      <div className="relative w-3 self-stretch">
+      <div className="relative w-[var(--size-rail-track)] self-stretch">
         {!isFirst && (
           <span
-            className="absolute top-[-6px] bottom-[calc(100%-var(--node-y)+16px)] left-1/2 w-[3px] -translate-x-1/2 rounded-b-[var(--radius-full)]"
+            className="absolute -top-[var(--size-rail-overflow)] bottom-[calc(100%-var(--node-y)+var(--space-lg))] left-1/2 w-[var(--size-rail-line)] -translate-x-1/2 rounded-b-[var(--radius-full)]"
             style={{ background: "var(--border)" }}
           />
         )}
         {!isLast && (
           <span
-            className="absolute top-[calc(var(--node-y)+16px)] bottom-[-6px] left-1/2 w-[3px] -translate-x-1/2 rounded-t-[var(--radius-full)]"
+            className="absolute top-[calc(var(--node-y)+var(--space-lg))] -bottom-[var(--size-rail-overflow)] left-1/2 w-[var(--size-rail-line)] -translate-x-1/2 rounded-t-[var(--radius-full)]"
             style={{ background: "var(--border)" }}
           />
         )}

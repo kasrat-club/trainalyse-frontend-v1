@@ -66,7 +66,6 @@
 
   /* TEXT — the neutral grey. Primary / muted / tertiary text are shades of it.
      (Named --ink-* so it doesn't collide with the font-size --text-* scale.) */
-  --ink-50: #eff0f8;  /* brighter than primary — text/icon lightens to this on hover */
   --ink-100: #eaecf5; /* lightest — primary text */
   --ink-200: #bcbdc5; /* muted / secondary text */
   --ink-300: #8d8e93; /* tertiary — dimmest readable text */
@@ -114,7 +113,6 @@
   --text-secondary: var(--ink-200); /* slightly dimmer text */
   --text-muted: var(--ink-200);     /* hints, placeholders, timestamps */
   --text-faint: var(--ink-300);     /* tertiary — the dimmest readable text */
-  --text-hover: var(--ink-50);      /* text/icon lightens to this on hover (non-destructive) */
 
   /* BRAND (10%) ------------------------------------------------------------- */
   --brand: var(--brand-300);       /* main buttons, links — used sparingly */
@@ -132,6 +130,9 @@
      search input, header, footer, dividers. */
   --border: var(--bg-200);         /* lines around inputs, cards, header/footer, dividers */
   --border-hover: var(--bg-100);   /* lighter navy — border hover state */
+
+  /* OVERLAY ----------------------------------------------------------------- */
+  --scrim: rgb(0 0 0 / 0.6);       /* the dim layer behind a full-screen modal */
 }
 
 
@@ -197,8 +198,43 @@
    ========================================================================= */
 
 .ds-scope {
-  --control-sm: 36px; /* standard — header buttons, calendar chips, banner circles */
+  --control-sm: 40px; /* standard — every control: header buttons, calendar chips,
+                         banner circles, search + form inputs. One height everywhere. */
   --control-lg: 60px; /* the FAB — the one exception */
+}
+
+
+/* =========================================================================
+   COMPONENT SIZES  (bespoke widths / heights for specific components)
+   =========================================================================
+   Footprints that aren't on the control/icon scale but must still be tokens,
+   never raw values. Each is named for the part it belongs to.
+   ========================================================================= */
+
+.ds-scope {
+  --size-dot: 8px;           /* small status / indicator dot (active-workout banner) */
+  --size-footer: 64px;       /* bottom tab bar (footer) height */
+
+  /* Step indicator (the onboarding pager) — every pill is identical; only the
+     colour differs (current = --brand, the rest = --surface). */
+  --size-step-width: 24px;   /* width of each step pill */
+  --size-step-height: 6px;   /* height of each step pill */
+
+  /* Centred panel max-widths */
+  --width-dialog: 360px;     /* confirm / alert modal */
+  --width-calendar: 400px;   /* calendar popover panel */
+  --width-pill-min: 92px;    /* minimum width of a pill button */
+
+  /* Text-input icon geometry */
+  --input-icon-offset: 14px; /* a leading / trailing icon's distance from the edge */
+  --input-icon-inset: 40px;  /* the input's text padding that clears that icon */
+
+  /* Timeline rail geometry (the left date rail on the home timeline) */
+  --size-rail-col: 36px;     /* width of the day / month column */
+  --size-rail-day: 24px;     /* height of the day-number row */
+  --size-rail-track: 12px;   /* width of the dot + line track column */
+  --size-rail-line: 3px;     /* thickness of the connector line */
+  --size-rail-overflow: 6px; /* how far each line half overflows into the card gap */
 }
 
 
@@ -214,6 +250,10 @@
   /* Focus glow — an even, all-directions soft ring in the surface-shadow colour
      (#6C7084). Used on inputs so a focused field reads clearly on the dark bg. */
   --shadow-focus: 0 0 0 3px color-mix(in srgb, var(--surface-shadow) 45%, transparent);
+
+  /* Error glow — the same ring in the danger colour (same as the error border).
+     The persistent red halo on an input with a validation error. */
+  --shadow-focus-danger: 0 0 0 3px color-mix(in srgb, var(--danger) 45%, transparent);
 }
 
 
@@ -239,6 +279,7 @@
    ========================================================================= */
 
 .ds-scope {
+  --space-2xs: 2px; /* hairline nudge (e.g. a label sitting just under a title) */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 12px;

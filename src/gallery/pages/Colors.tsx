@@ -21,7 +21,6 @@ const roles: Swatch[] = [
   { token: "--text-secondary", hex: "#BCBDC5", role: "Slightly dimmer text." },
   { token: "--text-muted", hex: "#BCBDC5", role: "Hints, placeholders, timestamps, stat labels, inactive tabs." },
   { token: "--text-faint", hex: "#8D8E93", role: "The dimmest readable text — e.g. days spilling in from the next month." },
-  { token: "--text-hover", hex: "#EFF0F8", role: "Text/icon lightens to this on hover (non-destructive buttons)." },
   { token: "--brand", hex: "#FFBA09", role: "The accent: FAB, active footer tab, logo, today ring, links. Used sparingly (~10%)." },
   { token: "--brand-hover", hex: "#FFCC60", role: "The lighter amber for hover on brand-filled elements." },
   { token: "--on-brand", hex: "#0A1130", role: "Text / icon placed ON a brand-filled surface — the dark background navy, since brand is light." },
@@ -44,7 +43,6 @@ const palette: PaletteGroup[] = [
   {
     family: "Text (neutral) — all text and icons",
     swatches: [
-      { token: "--ink-50", hex: "#EFF0F8", role: "Brighter than primary — the text/icon hover lightup." },
       { token: "--ink-100", hex: "#EAECF5", role: "Lightest — primary text." },
       { token: "--ink-200", hex: "#BCBDC5", role: "Muted / secondary text." },
       { token: "--ink-300", hex: "#8D8E93", role: "Tertiary — the dimmest readable text." },

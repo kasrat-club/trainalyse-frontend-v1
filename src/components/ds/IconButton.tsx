@@ -9,7 +9,7 @@ import { Button as ShadButton } from "@/components/ui/button"
 // shadcn Button (so focus ring / press / a11y come for free) and paints our look
 // on top. Every circular button is OUTLINE (transparent + border): the default
 // is neutral (--border), `destructive` is a RED outline (--danger-hover border +
-// --danger icon, for the banner discard). Always --control-sm (36px) + --icon-sm glyph.
+// --danger icon, for the banner discard). Always --control-sm (40px) + --icon-sm glyph.
 // Used in the components AND on the gallery Buttons page — one source of truth.
 
 const iconButtonVariants = cva(
@@ -17,13 +17,14 @@ const iconButtonVariants = cva(
   {
     variants: {
       variant: {
-        // neutral outline: grey --border edge + white icon. On hover the edge
-        // brightens to --border-hover, the fill lifts to --surface-hover (#3B405A),
-        // and the icon/text lights up to --text-hover (#EFF0F8). The dark:hover is
-        // needed to beat shadcn ghost's own dark:hover:bg-muted/50 (higher
-        // specificity) — tailwind-merge then drops shadcn's and ours wins.
+        // neutral outline: grey --border edge + primary icon. On hover the edge
+        // brightens to --border-hover and the fill lifts to --surface-hover — that
+        // IS the feedback; the icon stays primary (it's already the brightest, so
+        // there's nowhere to brighten it to). The dark:hover is needed to beat
+        // shadcn ghost's own dark:hover:bg-muted/50 (higher specificity) so
+        // tailwind-merge drops shadcn's and ours wins.
         outline:
-          "border border-[var(--border)] bg-transparent text-[var(--text-primary)] hover:bg-[var(--surface-hover)] dark:hover:bg-[var(--surface-hover)] hover:border-[var(--border-hover)] hover:text-[var(--text-hover)]",
+          "border border-[var(--border)] bg-transparent text-[var(--text-primary)] hover:bg-[var(--surface-hover)] dark:hover:bg-[var(--surface-hover)] hover:border-[var(--border-hover)]",
         // red outline: the border is --danger-hover (a lighter red than the icon,
         // so the outline reads at the same weight as the neutral grey edge, not
         // heavier); the icon is full --danger. On hover the fill turns

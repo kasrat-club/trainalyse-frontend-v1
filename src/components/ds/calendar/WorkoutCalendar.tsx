@@ -3,6 +3,7 @@ import { ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Calendar, CalendarDayButton } from "@/components/ui/calendar"
 import IconButton from "@/components/ds/IconButton"
+import Separator from "@/components/ds/Separator"
 
 // WorkoutCalendar — DUMB. The home "search by date" calendar, rebuilt on the new
 // design system and NOT a modal: it sits inline on the page at all times. It
@@ -28,7 +29,7 @@ type WorkoutCalendarProps = {
 // via classNames, so they can't be our IconButton). Kept visually identical to
 // the outline IconButton (close button) — same border, size and hover.
 const chip =
-  "flex size-[var(--control-sm)] items-center justify-center rounded-[var(--radius-full)] border border-[var(--border)] bg-transparent p-0 text-[var(--text-primary)] transition-colors hover:bg-[var(--surface-hover)] hover:border-[var(--border-hover)] hover:text-[var(--text-hover)] select-none aria-disabled:opacity-50"
+  "flex size-[var(--control-sm)] items-center justify-center rounded-[var(--radius-full)] border border-[var(--border)] bg-transparent p-0 text-[var(--text-primary)] transition-colors hover:bg-[var(--surface-hover)] hover:border-[var(--border-hover)] select-none aria-disabled:opacity-50"
 
 function WorkoutCalendar({
   month,
@@ -40,7 +41,7 @@ function WorkoutCalendar({
 }: WorkoutCalendarProps) {
   return (
     <div
-      className="flex w-full max-w-[400px] flex-col gap-[var(--space-lg)] p-[var(--space-lg)]"
+      className="flex w-full max-w-[var(--width-calendar)] flex-col gap-[var(--space-lg)] p-[var(--space-lg)]"
       style={{
         background: "var(--surface)",
         border: "var(--border-width) solid var(--border)",
@@ -110,12 +111,13 @@ function WorkoutCalendar({
                 // range rounding (rounded-l/r-(--cell-radius)) that shadcn forces on
                 // the FIRST/LAST column's selected button — otherwise the focus ring
                 // follows a mixed radius and renders as a "bell" on edge days.
-                "rounded-[var(--radius-full)]! data-[selected-single=true]:bg-transparent hover:bg-transparent dark:hover:bg-transparent before:absolute before:inset-[4px] before:-z-10 before:rounded-[var(--radius-full)] before:content-['']",
+                "rounded-[var(--radius-full)]! data-[selected-single=true]:bg-transparent hover:bg-transparent dark:hover:bg-transparent before:absolute before:inset-[var(--space-xs)] before:-z-10 before:rounded-[var(--radius-full)] before:content-['']",
                 // SELECTED: bright-amber (--brand) fill; on hover it brightens to
                 // --brand-hover and the navy number stays navy.
                 "data-[selected-single=true]:before:bg-[var(--brand)] data-[selected-single=true]:hover:before:bg-[var(--brand-hover)] data-[selected-single=true]:hover:text-[var(--on-brand)] dark:data-[selected-single=true]:hover:text-[var(--on-brand)]",
-                // PLAIN day hover: a faint --surface-hover circle + text lightup.
-                "hover:before:bg-[var(--surface-hover)] hover:text-[var(--text-hover)] dark:hover:text-[var(--text-hover)]",
+                // PLAIN day hover: a faint --surface-hover circle appears behind
+                // the number; the number stays primary (the circle is the feedback).
+                "hover:before:bg-[var(--surface-hover)]",
                 // days spilling in from the neighbouring month
                 dayProps.modifiers.outside && "text-[var(--text-faint)]",
                 // LOGGED: dark-gold (--brand-500) fill + navy number; on hover the
@@ -125,7 +127,7 @@ function WorkoutCalendar({
                 // TODAY: a brand ring (never a fill) that brightens to the lightest
                 // brand (--brand-100) on hover. after: so logged+today keeps its fill.
                 dayProps.modifiers.today &&
-                  "after:absolute after:inset-[4px] after:rounded-[var(--radius-full)] after:border-2 after:border-[var(--brand)] after:content-[''] hover:after:border-[var(--brand-100)]",
+                  "after:absolute after:inset-[var(--space-xs)] after:rounded-[var(--radius-full)] after:border-[length:var(--border-width-thick)] after:border-[var(--brand)] after:content-[''] hover:after:border-[var(--brand-100)]",
               )}
             />
           ),
@@ -133,7 +135,7 @@ function WorkoutCalendar({
       />
 
       {/* divider */}
-      <div style={{ height: "var(--border-width)", background: "var(--border)" }} />
+      <Separator />
 
       {/* legend so the fills read clearly */}
       <div
@@ -157,9 +159,10 @@ function WorkoutCalendar({
         <button
           type="button"
           onClick={() => onMonthChange(new Date())}
-          // on hover the text lights up to --text-hover and the brand ring glows
-          // to the lightest brand (--brand-100).
-          className="group flex items-center gap-[var(--space-sm)] outline-none transition-colors hover:text-[var(--text-hover)]"
+          // this text rests at --text-muted (inherited from the legend), so on
+          // hover it brightens UP to --text-primary; the brand ring glows to the
+          // lightest brand (--brand-100).
+          className="group flex items-center gap-[var(--space-sm)] outline-none transition-colors hover:text-[var(--text-primary)]"
         >
           <span className="size-[var(--icon-sm)] rounded-[var(--radius-full)] ring-2 ring-inset ring-[var(--brand)] transition-shadow group-hover:ring-[var(--brand-100)]" />
           Jump to today
