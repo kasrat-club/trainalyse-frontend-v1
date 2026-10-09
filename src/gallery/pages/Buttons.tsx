@@ -47,8 +47,11 @@ function Buttons() {
         name="Pill button"
         blurb="A pill with a text label. Variants: primary, brand, neutral, destructive."
       >
-        <ButtonRow label="Login / Save — the main action (primary; light fill, navy text)">
-          <PillButton variant="primary">Login</PillButton>
+        <ButtonRow label="Login / Sign Up / Save — the main action (primary; light fill, navy text). Same variant everywhere.">
+          <div className="flex gap-[var(--space-sm)]">
+            <PillButton variant="primary">Login</PillButton>
+            <PillButton variant="primary">Sign Up</PillButton>
+          </div>
         </ButtonRow>
         <ButtonRow label="Clear Date — Home overlay while a date is searched (brand; amber fill)">
           <PillButton variant="brand">Clear Date</PillButton>

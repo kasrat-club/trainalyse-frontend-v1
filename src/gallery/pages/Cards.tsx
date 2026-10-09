@@ -6,6 +6,7 @@ import WorkoutDateCard, {
   type WorkoutEntry,
 } from "@/components/ds/timeline/WorkoutDateCard"
 import LoginCard from "@/components/ds/LoginCard"
+import SignUpCard from "@/components/ds/SignUpCard"
 import { heading, muted } from "../styles"
 
 // Cards — the workout card in its two real states: one workout on a date, and
@@ -69,6 +70,13 @@ function Cards() {
           <LoginShowcase />
         </div>
       </section>
+
+      <section className="flex flex-col gap-[var(--space-md)]">
+        <span style={muted}>Sign-up card — the create-account form composed from the atoms</span>
+        <div className="max-w-sm">
+          <SignUpShowcase />
+        </div>
+      </section>
     </div>
   )
 }
@@ -83,6 +91,26 @@ function LoginShowcase() {
       password={password}
       onEmailChange={setEmail}
       onPasswordChange={setPassword}
+    />
+  )
+}
+
+// SignUpCard is controlled too — one bit of state per field.
+function SignUpShowcase() {
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  return (
+    <SignUpCard
+      username={username}
+      email={email}
+      password={password}
+      confirmPassword={confirmPassword}
+      onUsernameChange={setUsername}
+      onEmailChange={setEmail}
+      onPasswordChange={setPassword}
+      onConfirmPasswordChange={setConfirmPassword}
     />
   )
 }

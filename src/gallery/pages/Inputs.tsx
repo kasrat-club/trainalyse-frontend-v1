@@ -40,6 +40,21 @@ function Inputs() {
         </div>
       </section>
 
+      <section className="flex flex-col gap-[var(--space-lg)]">
+        <span style={muted}>
+          Sign-up fields — the same text and secret inputs, different labels
+        </span>
+        <div className="flex max-w-sm flex-col gap-8">
+          <Field state="Default" label="Username" placeholder="Create your username" />
+          <Field
+            state="Default"
+            label="Confirm password"
+            placeholder="Re-enter your password"
+            secret
+          />
+        </div>
+      </section>
+
       <section className="flex flex-col gap-[var(--space-md)]">
         <span style={muted}>Search bar — header, filters workouts by title</span>
         <SearchShowcase />

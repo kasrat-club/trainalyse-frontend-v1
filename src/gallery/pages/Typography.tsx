@@ -39,6 +39,10 @@ type TypeStyle = {
   altSample?: string
   altColorToken?: string
   altNote?: string
+  // An optional second sample in the SAME colour — a different text that uses the
+  // same style, to show one style covers both screens (login + sign-up).
+  alsoSample?: string
+  alsoNote?: string
 }
 
 const styles: TypeStyle[] = [
@@ -67,6 +71,8 @@ const styles: TypeStyle[] = [
     colorToken: "--text-muted",
     usage:
       "Default reading text — subtitles, input placeholders, button labels. Colour changes with context (muted here, navy on the Login button).",
+    alsoSample: "Create your account",
+    alsoNote: "same style — the sign-up subtitle",
   },
   {
     name: "Label",
@@ -199,6 +205,21 @@ function StyleRow(s: TypeStyle & { divider?: boolean }) {
       >
         {s.sample}
       </span>
+      {s.alsoSample && (
+        <div className="flex flex-wrap items-baseline gap-[var(--space-sm)]">
+          <span
+            style={{
+              color: `var(${s.colorToken})`,
+              fontSize: `var(${s.sizeToken})`,
+              lineHeight: `var(${s.leadingToken})`,
+              fontWeight: `var(${s.weightToken})`,
+            }}
+          >
+            {s.alsoSample}
+          </span>
+          <span style={meta}>{s.alsoNote}</span>
+        </div>
+      )}
       {s.altSample && s.altColorToken && (
         <div className="flex flex-wrap items-baseline gap-[var(--space-sm)]">
           <span
