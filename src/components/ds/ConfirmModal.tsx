@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 
-import { Button } from "@/components/ui/button"
+import PillButton from "@/components/ds/PillButton"
 
 // ConfirmModal — DUMB. The app-wide "are you sure?" dialog: a full-screen scrim
 // + a centred card with a bold title, optional muted description, and two pill
@@ -68,31 +68,13 @@ function ConfirmModal({
         )}
 
         <div className="mt-[var(--space-lg)] flex justify-between gap-[var(--space-md)]">
-          <Button
-            variant="ghost"
-            onClick={onCancel}
-            className="h-[var(--control-sm)] min-w-[92px] rounded-[var(--radius-full)] border border-[var(--border)] px-[var(--space-lg)] text-[var(--text-primary)] hover:bg-[var(--surface-hover)] dark:hover:bg-[var(--surface-hover)] hover:border-[var(--border-hover)] hover:text-[var(--text-hover)]"
-            style={{
-              fontSize: "var(--text-sm)",
-              lineHeight: "var(--leading-sm)",
-              fontWeight: "var(--font-weight-bold)",
-            }}
-          >
+          <PillButton variant="neutral" onClick={onCancel}>
             {cancelLabel}
-          </Button>
+          </PillButton>
 
-          <Button
-            variant="ghost"
-            onClick={onConfirm}
-            className="h-[var(--control-sm)] min-w-[92px] rounded-[var(--radius-full)] border border-[var(--danger-hover)] bg-transparent px-[var(--space-lg)] text-[var(--danger)] hover:bg-[var(--surface-hover-danger)] dark:hover:bg-[var(--surface-hover-danger)] hover:text-[var(--danger-hover)]"
-            style={{
-              fontSize: "var(--text-sm)",
-              lineHeight: "var(--leading-sm)",
-              fontWeight: "var(--font-weight-bold)",
-            }}
-          >
+          <PillButton variant="destructive" onClick={onConfirm}>
             {confirmLabel}
-          </Button>
+          </PillButton>
         </div>
       </div>
     </div>

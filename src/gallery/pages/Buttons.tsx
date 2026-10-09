@@ -3,8 +3,9 @@ import { ChevronLeft, ChevronRight, ChevronUp, Trash2Icon, X } from "lucide-reac
 
 import IconButton from "@/components/ds/IconButton"
 import AddWorkoutButton from "@/components/ds/AddWorkoutButton"
+import ClearDateButton from "@/components/ds/ClearDateButton"
+import PillButton from "@/components/ds/PillButton"
 import CalendarButton from "@/components/ds/header/CalendarButton"
-import { Button } from "@/components/ui/button"
 import { heading, muted } from "../styles"
 
 // Buttons — every button used in the project, in one place. These are the REAL
@@ -49,61 +50,20 @@ function Buttons() {
           <AddWorkoutButton />
         </ButtonRow>
 
-        {/* Text buttons, rendered AS THEY CURRENTLY APPEAR in the app so we can
-            see the inconsistency before unifying them: Clear Date is a solid
-            brand button with a soft corner, while the modal's Cancel / Discard
-            are full pills (outline + solid red). These are faithful snapshots of
-            the live markup, not a shared component yet.
-
-            Each wraps the shadcn <Button> (variant="ghost") so it inherits the
-            real shadcn BEHAVIOUR — the press bounce (active:translate-y), the
-            focus ring and the transition — while we paint each distinct look on
-            top. They stay DUMB (no onClick). Because the fills are inline styles,
-            ghost's hover background can't show, so the solid ones get an opacity
-            hover instead (the design system's hover convention). */}
-        <ButtonRow label="Clear Date — Home, centred overlay while a date is searched (solid brand, soft corners)">
-          <Button
-            variant="ghost"
-            className="h-[var(--control-sm)] rounded-[var(--radius-md)] px-[var(--space-lg)] hover:opacity-90 active:opacity-80"
-            style={{
-              background: "var(--brand)",
-              color: "var(--on-brand)",
-              fontSize: "var(--text-sm)",
-              lineHeight: "var(--leading-sm)",
-            }}
-          >
-            Clear Date
-          </Button>
+        {/* Text buttons — the REAL shared components (no more inline snapshots, so
+            this catalogue and the live app can't drift): Clear Date is
+            ClearDateButton (solid brand → --brand-hover), and the modal's
+            Cancel / Discard are PillButton's neutral / destructive variants. */}
+        <ButtonRow label="Clear Date — Home, centred overlay while a date is searched (solid brand, lightens to --brand-hover)">
+          <ClearDateButton />
         </ButtonRow>
 
-        <ButtonRow label="Cancel — confirm modal, left action (outline pill)">
-          <Button
-            variant="ghost"
-            className="h-[var(--control-sm)] min-w-[92px] rounded-[var(--radius-full)] border px-[var(--space-lg)] hover:bg-[var(--background)]"
-            style={{
-              borderColor: "var(--border)",
-              color: "var(--text-primary)",
-              fontSize: "var(--text-sm)",
-              lineHeight: "var(--leading-sm)",
-              fontWeight: "var(--font-weight-bold)",
-            }}
-          >
-            Cancel
-          </Button>
+        <ButtonRow label="Cancel — confirm modal, left action (neutral pill)">
+          <PillButton variant="neutral">Cancel</PillButton>
         </ButtonRow>
 
-        <ButtonRow label="Discard — confirm modal, right action (red outline pill, matches the trash button)">
-          <Button
-            variant="ghost"
-            className="h-[var(--control-sm)] min-w-[92px] rounded-[var(--radius-full)] border border-[color-mix(in_srgb,var(--danger)_45%,transparent)] bg-transparent px-[var(--space-lg)] text-[var(--danger)] hover:bg-[color-mix(in_srgb,var(--danger)_12%,transparent)] hover:text-[var(--danger)]"
-            style={{
-              fontSize: "var(--text-sm)",
-              lineHeight: "var(--leading-sm)",
-              fontWeight: "var(--font-weight-bold)",
-            }}
-          >
-            Discard
-          </Button>
+        <ButtonRow label="Discard — confirm modal, right action (destructive pill, matches the trash button)">
+          <PillButton variant="destructive">Discard</PillButton>
         </ButtonRow>
       </div>
     </div>
