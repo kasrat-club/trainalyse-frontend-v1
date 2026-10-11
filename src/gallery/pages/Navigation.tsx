@@ -5,6 +5,8 @@ import { ChartLine, Home, Settings } from "lucide-react"
 import Footer from "@/components/ds/Footer"
 import Separator from "@/components/ds/Separator"
 import StepIndicator from "@/components/ds/StepIndicator"
+import Tabs from "@/components/ds/Tabs"
+import SegmentedToggle from "@/components/ds/SegmentedToggle"
 import { heading, muted } from "../styles"
 
 // Navigation — the wayfinding components, grouped by CLASS with the real
@@ -40,6 +42,57 @@ function Navigation() {
       >
         <StepIndicator total={2} current={0} />
       </NavClass>
+
+      <Separator />
+
+      <NavClass
+        name="Tabs"
+        blurb="Pill tabs that switch content views — the view page's per-limb Left / Right. Active = brand fill + navy text; inactive = muted, brightening to primary on hover. (Shares the SegmentedToggle pill look, but it's tabs, not a form selector.)"
+      >
+        <div className="flex max-w-sm flex-col gap-[var(--space-lg)]">
+          <Tabs
+            ariaLabel="Limb"
+            defaultValue="left"
+            tabs={[
+              { value: "left", label: "Left", content: <TabPanel text="Left limb's sets go here." /> },
+              { value: "right", label: "Right", content: <TabPanel text="Right limb's sets go here." /> },
+            ]}
+          />
+
+          <div className="flex flex-col gap-[var(--space-sm)]">
+            <span style={muted}>
+              For comparison — the SegmentedToggle (kg/lbs): the same pill look, but a form selector (primary fill, radio semantics). Its real home is the Inputs page.
+            </span>
+            <ToggleCompare />
+          </div>
+        </div>
+      </NavClass>
+    </div>
+  )
+}
+
+// Stand-in for a tab's content until the per-limb set grid is built.
+function TabPanel({ text }: { text: string }) {
+  return <span style={muted}>{text}</span>
+}
+
+// The SegmentedToggle on a --surface chip, shown here only to compare with Tabs.
+function ToggleCompare() {
+  const [unit, setUnit] = useState("kg")
+  return (
+    <div
+      className="self-start p-[var(--space-sm)]"
+      style={{ background: "var(--surface)", borderRadius: "var(--radius-full)" }}
+    >
+      <SegmentedToggle
+        ariaLabel="Weight unit"
+        value={unit}
+        onChange={setUnit}
+        options={[
+          { value: "kg", label: "kg" },
+          { value: "lbs", label: "lbs" },
+        ]}
+      />
     </div>
   )
 }

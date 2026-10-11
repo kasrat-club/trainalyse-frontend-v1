@@ -220,6 +220,11 @@
   --size-step-width: 24px;   /* width of each step pill */
   --size-step-height: 6px;   /* height of each step pill */
 
+  /* Segmented toggle (kg/lbs, cm/ft) height inside a pill input — the input
+     height minus a --space-xs (4px) inset top and bottom. The calc keeps that
+     4px breathing room automatically if --control-sm ever changes. */
+  --size-toggle: calc(var(--control-sm) - 2 * var(--space-xs)); /* = 32px today */
+
   /* Centred panel max-widths */
   --width-dialog: 360px;     /* confirm / alert modal */
   --width-calendar: 400px;   /* calendar popover panel */

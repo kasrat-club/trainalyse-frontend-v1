@@ -13,8 +13,8 @@ import PillButton from "@/components/ds/PillButton"
 // is a RED OUTLINE (softened --danger border + red text + faint red hover),
 // matching the trash button rather than a solid red fill — the palette has no
 // error colour, and the outline reads at the same weight as the neutral Cancel.
-// TOKENS: colours/spacing/radius/size are all new-design-system tokens; the
-// scrim colour (rgb black 60%) and the 92px min-width have no token yet.
+// TOKENS: colours/spacing/radius/size are all new-design-system tokens — the
+// scrim is --scrim, the dialog width is --width-dialog.
 
 type ConfirmModalProps = {
   title: ReactNode
@@ -59,8 +59,8 @@ function ConfirmModal({
             className="mt-[var(--space-sm)]"
             style={{
               color: "var(--text-muted)",
-              fontSize: "var(--text-sm)",
-              lineHeight: "var(--leading-sm)",
+              fontSize: "var(--text-md)",
+              lineHeight: "var(--leading-md)",
             }}
           >
             {description}

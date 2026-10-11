@@ -23,7 +23,11 @@ function StatRow({ icon: Icon, label, value, title }: StatItem) {
         <Icon className="size-[var(--icon-sm)] shrink-0" />
         <span
           className="truncate"
-          style={{ fontSize: "var(--text-sm)", lineHeight: "var(--leading-sm)" }}
+          style={{
+            fontSize: "var(--text-sm)",
+            lineHeight: "var(--leading-sm)",
+            fontWeight: "var(--font-weight-bold)",
+          }}
         >
           {label}
         </span>

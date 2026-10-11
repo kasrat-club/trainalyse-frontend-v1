@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 import WorkoutCalendar from "@/components/ds/calendar/WorkoutCalendar"
+import DobCalendar from "@/components/ds/calendar/DobCalendar"
 import { heading, muted } from "../styles"
 
 // Calendar — the home "search by date" calendar. The REAL ds WorkoutCalendar,
@@ -17,6 +18,13 @@ function CalendarPage() {
       <section className="flex flex-col gap-[var(--space-md)]">
         <span style={muted}>Home search-by-date calendar (navigate months, pick a day)</span>
         <CalendarShowcase />
+      </section>
+
+      <section className="flex flex-col gap-[var(--space-md)]">
+        <span style={muted}>
+          Birthdate picker (more-info) — same calendar, no logged days or legend, future dates disabled
+        </span>
+        <DobShowcase />
       </section>
     </div>
   )
@@ -40,6 +48,23 @@ function CalendarShowcase() {
       selected={selected}
       onSelect={setSelected}
       loggedDates={loggedDates}
+      onClose={() => {}}
+    />
+  )
+}
+
+// Birthdate harness: starts on a past month so the disabled-future state is
+// visible; selecting and navigating are live, the X is a no-op here.
+function DobShowcase() {
+  const [month, setMonth] = useState(new Date(1903, 11))
+  const [selected, setSelected] = useState<Date | undefined>(undefined)
+
+  return (
+    <DobCalendar
+      month={month}
+      onMonthChange={setMonth}
+      selected={selected}
+      onSelect={setSelected}
       onClose={() => {}}
     />
   )

@@ -3,6 +3,9 @@ import type { CSSProperties } from "react"
 
 import SearchBar from "@/components/ds/header/SearchBar"
 import TextInput from "@/components/ds/TextInput"
+import SegmentedToggle from "@/components/ds/SegmentedToggle"
+import DateField from "@/components/ds/DateField"
+import MeasureInput from "@/components/ds/MeasureInput"
 import { heading, muted } from "../styles"
 
 // Inputs — the app's text inputs. The login Email / Password fields (default +
@@ -56,6 +59,65 @@ function Inputs() {
       </section>
 
       <section className="flex flex-col gap-[var(--space-md)]">
+        <span style={muted}>
+          More-info fields — a date-of-birth trigger and weight/height with the unit toggle inside (on a --surface card, as in the app)
+        </span>
+        <div
+          className="flex max-w-sm flex-col gap-8 p-[var(--space-lg)]"
+          style={{ background: "var(--surface)", borderRadius: "var(--radius-lg)" }}
+        >
+          <div className="flex flex-col gap-[var(--space-sm)]">
+            <label style={fieldLabel}>Date of birth</label>
+            <DateField onClick={() => {}} />
+          </div>
+          <MeasureShowcase
+            label="Weight"
+            placeholder="Enter your weight"
+            initialUnit="kg"
+            units={[
+              { value: "kg", label: "kg" },
+              { value: "lbs", label: "lbs" },
+            ]}
+          />
+          <MeasureShowcase
+            optional
+            label="Height"
+            placeholder="Enter your height"
+            initialUnit="cm"
+            splitUnit="ft"
+            units={[
+              { value: "cm", label: "cm" },
+              { value: "ft", label: "ft" },
+            ]}
+          />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-[var(--space-md)]">
+        <span style={muted}>
+          Segmented toggle — the unit picker on its own (sits inside the weight / height inputs; shown on a --surface chip)
+        </span>
+        <div className="flex flex-wrap gap-[var(--space-lg)]">
+          <ToggleChip
+            ariaLabel="Weight unit"
+            initial="kg"
+            options={[
+              { value: "kg", label: "kg" },
+              { value: "lbs", label: "lbs" },
+            ]}
+          />
+          <ToggleChip
+            ariaLabel="Height unit"
+            initial="cm"
+            options={[
+              { value: "cm", label: "cm" },
+              { value: "ft", label: "ft" },
+            ]}
+          />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-[var(--space-md)]">
         <span style={muted}>Search bar — header, filters workouts by title</span>
         <SearchShowcase />
       </section>
@@ -99,6 +161,82 @@ function Field({
   )
 }
 
+// A weight/height field (label + MeasureInput) with its own value + unit state.
+// When `splitUnit` is the chosen unit (ft → feet + inches), it feeds MeasureInput
+// TWO fields instead of one — that "ft means feet+inches" rule lives here, not in
+// the dumb MeasureInput.
+function MeasureShowcase({
+  label,
+  optional = false,
+  placeholder,
+  initialUnit,
+  units,
+  splitUnit,
+}: {
+  label: string
+  optional?: boolean
+  placeholder: string
+  initialUnit: string
+  units: { value: string; label: string }[]
+  splitUnit?: string
+}) {
+  const [unit, setUnit] = useState(initialUnit)
+  const [value, setValue] = useState("")
+  const [feet, setFeet] = useState("")
+  const [inches, setInches] = useState("")
+
+  const fields =
+    unit === splitUnit
+      ? [
+          { value: feet, onChange: setFeet, placeholder: "ft", ariaLabel: `${label} (feet)` },
+          { value: inches, onChange: setInches, placeholder: "in", ariaLabel: `${label} (inches)` },
+        ]
+      : [{ value, onChange: setValue, placeholder, ariaLabel: label }]
+
+  return (
+    <div className="flex flex-col gap-[var(--space-sm)]">
+      <label style={fieldLabel}>
+        {label}
+        {optional && <span style={optionalHint}> (optional)</span>}
+      </label>
+      <MeasureInput
+        fields={fields}
+        unit={unit}
+        onUnitChange={setUnit}
+        unitOptions={units}
+        unitAriaLabel={`${label} unit`}
+      />
+    </div>
+  )
+}
+
+// A toggle on a --surface chip (the surface it sits on inside an input), with
+// its own selection state so switching is live.
+function ToggleChip({
+  options,
+  initial,
+  ariaLabel,
+}: {
+  options: { value: string; label: string }[]
+  initial: string
+  ariaLabel: string
+}) {
+  const [value, setValue] = useState(initial)
+  return (
+    <div
+      className="self-start p-[var(--space-sm)]"
+      style={{ background: "var(--surface)", borderRadius: "var(--radius-full)" }}
+    >
+      <SegmentedToggle
+        options={options}
+        value={value}
+        onChange={setValue}
+        ariaLabel={ariaLabel}
+      />
+    </div>
+  )
+}
+
 // SearchBar is controlled and flex-1, so it needs a parent that holds the value
 // and gives it a width to fill.
 function SearchShowcase() {
@@ -128,6 +266,14 @@ const errorText: CSSProperties = {
   color: "var(--danger)",
   fontSize: "var(--text-sm)",
   lineHeight: "var(--leading-sm)",
+}
+
+// "(optional)" beside a label — the Caption style (14/400 muted), not the label's 700.
+const optionalHint: CSSProperties = {
+  color: "var(--text-muted)",
+  fontSize: "var(--text-sm)",
+  lineHeight: "var(--leading-sm)",
+  fontWeight: "var(--font-weight-regular)",
 }
 
 export default Inputs

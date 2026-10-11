@@ -56,7 +56,7 @@ function WorkoutBanner({
           <span
             className="uppercase"
             style={{
-              color: "var(--text-primary)",
+              color: "var(--brand)",
               fontSize: "var(--text-sm)",
               lineHeight: "var(--leading-sm)",
               fontWeight: "var(--font-weight-bold)",
@@ -68,7 +68,7 @@ function WorkoutBanner({
         <p
           className="truncate"
           style={{
-            color: "var(--text-muted)",
+            color: "var(--text-primary)",
             fontSize: "var(--text-md)",
             lineHeight: "var(--leading-md)",
             fontWeight: "var(--font-weight-bold)",

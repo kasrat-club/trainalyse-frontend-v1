@@ -27,8 +27,8 @@ function MonthHeading({ month, workoutCount }: MonthHeadingProps) {
         className="shrink-0"
         style={{
           color: "var(--text-muted)",
-          fontSize: "var(--text-md)",
-          lineHeight: "var(--leading-md)",
+          fontSize: "var(--text-lg)",
+          lineHeight: "var(--leading-lg)",
           fontWeight: "var(--font-weight-bold)",
         }}
       >

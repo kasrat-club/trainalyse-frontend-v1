@@ -7,6 +7,8 @@ import WorkoutDateCard, {
 } from "@/components/ds/timeline/WorkoutDateCard"
 import LoginCard from "@/components/ds/LoginCard"
 import SignUpCard from "@/components/ds/SignUpCard"
+import Accordion from "@/components/ds/Accordion"
+import ExerciseCard from "@/components/ds/ExerciseCard"
 import { heading, muted } from "../styles"
 
 // Cards — the workout card in its two real states: one workout on a date, and
@@ -77,8 +79,67 @@ function Cards() {
           <SignUpShowcase />
         </div>
       </section>
+
+      <section className="flex flex-col gap-[var(--space-md)]">
+        <span style={muted}>
+          Exercise accordion — tap a header to expand/collapse; the chevron (IconButton look) rotates. Content is a placeholder until the set grid is built.
+        </span>
+        <div className="max-w-sm">
+          <Accordion
+            defaultOpenId="bicep"
+            items={[
+              {
+                id: "bicep",
+                name: "Bicep Curl (Dumbbell)",
+                content: <AccordionPlaceholder />,
+              },
+              {
+                id: "tricep",
+                name: "Tricep Pushdown (Cable)",
+                content: <AccordionPlaceholder />,
+              },
+            ]}
+          />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-[var(--space-md)]">
+        <span style={muted}>
+          Exercise card (view page) — the whole thing composed: surface card + accordion (name + chevron) + per-limb tabs + the set grid (rail, Set heading, WEIGHTS/REPS columns) + the note
+        </span>
+        <div className="max-w-sm">
+          <ExerciseCard
+            name="Bicep Curl (Dumbbell)"
+            limbs={[
+              {
+                value: "left",
+                label: "Left",
+                sets: [
+                  { weight: "14", reps: "12" },
+                  { weight: "16", reps: "8" },
+                ],
+                note: "Felt strong today — went up 2 kg on the second set though the right arm lagged a little.",
+              },
+              {
+                value: "right",
+                label: "Right",
+                sets: [
+                  { weight: "12", reps: "10" },
+                  { weight: "14", reps: "8" },
+                ],
+                note: "Right arm lagged a little.",
+              },
+            ]}
+          />
+        </div>
+      </section>
     </div>
   )
+}
+
+// Stand-in for an exercise's set rows, which aren't built yet.
+function AccordionPlaceholder() {
+  return <span style={muted}>The set rows for this exercise go here (built later).</span>
 }
 
 // LoginCard is controlled, so it needs a parent holding the field values.

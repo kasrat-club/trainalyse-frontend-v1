@@ -47,17 +47,22 @@ function Buttons() {
         name="Pill button"
         blurb="A pill with a text label. Variants: primary, brand, neutral, destructive."
       >
-        <ButtonRow label="Login / Sign Up / Save — the main action (primary; light fill, navy text). Same variant everywhere.">
-          <div className="flex gap-[var(--space-sm)]">
+        <ButtonRow label="Login / Sign Up / Continue / Edit — the main action (primary; light fill, navy text). The one primary per screen (Edit = the view page's main action).">
+          <div className="flex flex-wrap gap-[var(--space-sm)]">
             <PillButton variant="primary">Login</PillButton>
             <PillButton variant="primary">Sign Up</PillButton>
+            <PillButton variant="primary">Continue</PillButton>
+            <PillButton variant="primary">Edit</PillButton>
           </div>
         </ButtonRow>
         <ButtonRow label="Clear Date — Home overlay while a date is searched (brand; amber fill)">
           <PillButton variant="brand">Clear Date</PillButton>
         </ButtonRow>
-        <ButtonRow label="Cancel — confirm modal, dismiss (neutral; outline)">
-          <PillButton variant="neutral">Cancel</PillButton>
+        <ButtonRow label="Cancel / Back — the dismiss or go-back action (neutral outline pill). Back is a solid secondary, not a filled hero.">
+          <div className="flex flex-wrap gap-[var(--space-sm)]">
+            <PillButton variant="neutral">Cancel</PillButton>
+            <PillButton variant="neutral">Back</PillButton>
+          </div>
         </ButtonRow>
         <ButtonRow label="Discard — confirm modal, confirm the danger (destructive; red outline)">
           <PillButton variant="destructive">Discard</PillButton>
